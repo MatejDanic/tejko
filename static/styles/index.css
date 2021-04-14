@@ -1,0 +1,260 @@
+html body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: aliceblue;
+}
+
+body {
+  color: darkslategray;
+  background-color: aliceblue;
+}
+
+section {
+  min-width: 576px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+footer {
+  position: fixed;
+  right: 10vw;
+  bottom: 10vh;
+}
+
+.button-theme {
+  padding: 10px;
+  background-color: darkslategray;
+  border-radius: 5px;
+  color: aliceblue;
+  font-size: large;
+  font-weight: bolder;
+}
+
+.content {
+  padding: 5px;
+  width: 50%;
+  min-width: 500px;
+}
+
+a {
+  text-decoration: none;
+}
+
+header {
+  width: 100%;
+  height: 16vh;
+}
+
+a {
+  color: darkslateblue;
+  font-weight: bolder;
+}
+
+a:hover {
+  color: indianred;
+}
+
+.button {   
+  outline: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+}
+
+nav {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.nav-bar {
+  justify-content: center;
+  position: relative;
+  width: 70%;
+  min-width: 576px;
+  height: 10vh;
+  display: flex;
+  background-color: lightgray;
+}
+
+.nav-left {
+  height: 100%;
+  display: flex;
+  position: relative;
+  left: 0;
+}
+
+.nav-right {
+  height: 100%;
+  position: relative;
+  right: 0;
+  display: flex;
+}
+
+.nav-element {
+  text-align: center;
+  background-color: lightgray;
+  color: darkslategray;
+  width: 114px;
+  font-weight: bolder;
+  font-size: x-large;
+}
+
+.nav-element:hover {
+  background-color: darkslategray;
+  color: aliceblue;
+}
+
+.image-container {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.icon {
+  margin-left: 10px;
+  margin-right: 10px;
+  height: 50px;
+  width: 50px;
+}
+
+.bio-image {
+  height: 40vh;
+}
+
+table, th, td {
+  border: 1px solid darkslategray;
+}
+
+table {
+  width: 100%;
+}
+
+tr, td {
+  padding: 10px;
+}
+
+.container {
+  display: block;
+  flex-wrap: wrap;
+}
+
+.container-item {
+  margin-bottom: 10px;
+}
+
+
+/* DARK MODE */
+
+body.dark-theme {
+  color: aliceblue;
+  background: #282a30;
+}
+
+body.dark-theme a {
+  color: indianred;
+}
+
+body.dark-theme a:hover {
+  color: skyblue;
+}
+
+body.dark-theme .nav-bar {
+  background-color: darkslategray;
+
+}
+
+body.dark-theme .nav-element {  
+  background-color: darkslategray;
+  color: aliceblue;
+}
+
+body.dark-theme .nav-element:hover {
+  background-color: aliceblue;
+  color: darkslategray;
+}
+
+body.dark-theme .button-theme {
+  background-color: aliceblue;
+  color: darkslategray;
+}
+
+/* TEST */
+
+.drop-container {
+  padding: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid darkslategray;
+  border-radius: 20px;
+}
+
+.error {
+  text-shadow: 0 0 10px indianred;
+  font-size: 32px;
+  color: white;
+  font-weight: bolder;
+}
+
+
+/* MOBILE */
+
+@media screen and (max-width: 576px) {
+  header {
+    border-bottom: 2px solid darkslategray;
+  }
+
+  nav {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .content {
+    width: 100%;
+    min-width: auto;
+  }
+
+  table {
+    width: 100%;
+  }
+  
+  tr, td {
+    padding: 5px;
+  }
+
+  .nav-bar {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .nav-left {
+    width: auto;
+  }
+
+  .nav-right {
+    width: auto;
+    position: relative;
+  }
+
+  .nav-element {
+    width: 19vw;
+  }
+
+  section {
+    width: 100%;
+    min-width: auto;
+  }
+
+}
