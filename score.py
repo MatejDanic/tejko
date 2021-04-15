@@ -1,18 +1,18 @@
-def calculate_score(dice, box_type):
+def calculate_score(dice, box_order):
     score = 0
-    if box_type <= 6:
-        score = dice.count(box_type) * (box_type)
+    if box_order <= 6:
+        score = dice.count(box_order) * (box_order)
 
-    elif box_type == 7 or box_type == 8:
+    elif box_order == 7 or box_order == 8:
         score = sum(dice)
 
-    elif box_type == 9:
+    elif box_order == 9:
         for d in dice:
             if dice.count(d)  >= 3:
                 score = 3 * d + 10
                 break
 
-    elif box_type == 10:
+    elif box_order == 10:
         has_straight = True
         straight = [2, 3, 4, 5]
         for n in straight:
@@ -24,7 +24,7 @@ def calculate_score(dice, box_type):
             elif 6 in dice:
                 score = 45
 
-    elif box_type == 11:
+    elif box_order == 11:
         found_pair = False
         found_trips = False
         for d in dice:
@@ -41,13 +41,13 @@ def calculate_score(dice, box_type):
         else:
             score += 30
 
-    elif box_type == 12:
+    elif box_order == 12:
         for d in dice:
             if dice.count(d)  >= 4:
                 score = 4 * d + 40
                 break
 
-    elif box_type == 13:
+    elif box_order == 13:
         for d in dice:
             if dice.count(d)  == 5:
                 score = 5 * d + 50

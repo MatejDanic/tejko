@@ -1,5 +1,5 @@
-COLUMN_TYPES = ["DOWNWARDS", "UPWARDS", "ANY_DIRECTION", "ANNOUNCEMENT"]
-BOX_TYPES = ["ONES", "TWOS", "THREES", "FOURS", "FIVES", "SIXES", "MAX", "MIN", "TRIPS", "STRAIGHT", "FULL", "POKER", "JAMB"]
+COLUMN_LABELS = ["DOWNWARDS", "UPWARDS", "ANY_DIRECTION", "ANNOUNCEMENT"]
+BOX_LABELS = ["ONES", "TWOS", "THREES", "FOURS", "FIVES", "SIXES", "MAX", "MIN", "TRIPS", "STRAIGHT", "FULL", "POKER", "JAMB"]
 
 class Jamb:
     def __init__(self):
@@ -8,21 +8,23 @@ class Jamb:
         self.dice = []
         for i in range(5):
             dice = {}
-            dice["ordinal"] = i + 1
+            dice["order"] = i + 1
             dice["value"] = 6
             self.dice.append(dice)
         self.form = {}
         self.form["columns"] = []
         for i in range(4):
             column = {}
-            column["type"] = COLUMN_TYPES[i]
+            column["order"] = i + 1
+            column["label"] = COLUMN_LABELS[i]
             column["boxes"] = []
             for j in range(13):
                 box = {}
-                box["type"] = BOX_TYPES[j]
+                box["order"] = j + 1
+                box["label"] = BOX_LABELS[j]
                 box["value"] = 0
                 box["filled"] = False
-                box["available"] = column["type"] == "DOWNWARDS" and box["type"] == "ONES" or column["type"] == "UPWARDS" and box["type"] == "JAMB" or column["type"] == "ANY_DIRECTION" or column["type"] == "ANNOUNCEMENT"
+                box["available"] = column["label"] == "DOWNWARDS" and box["label"] == "ONES" or column["label"] == "UPWARDS" and box["label"] == "JAMB" or column["label"] == "ANY_DIRECTION" or column["label"] == "ANNOUNCEMENT"
                 column["boxes"].append(box)
             self.form["columns"].append(column)
 

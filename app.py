@@ -49,8 +49,8 @@ def jamb():
 
 
 
-@app.route("/jamb/<jamb_id>")
-def jamb_load(jamb_id):
+@app.route("/jamb/<jamb_id>/load")
+def load(jamb_id):
     try:
         session["jamb_id"] = jamb_id
         return redirect(url_for("index"))
@@ -80,7 +80,7 @@ def roll(jamb_id):
             jamb["roll_count"] = jamb["roll_count"] + 1
 
             for dice in jamb["dice"]:
-                if dice["ordinal"] in dice_to_roll:
+                if dice["order"] in dice_to_roll:
                     dice["value"] = random.randint(1, 6)
             # update current jamb
             db_operations.update_jamb(db, jamb)

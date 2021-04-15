@@ -17,7 +17,7 @@
 <div class="center">
     <div class="dice-rack" id="dice-rack">
         {% for dice in jamb.dice %}
-        <button class="button image-container dice dice-border-black" id="DICE-{{dice.ordinal}}"></button>
+        <button class="button image-container dice dice-border-black" id="DICE-{{dice.order}}"></button>
         {% endfor %}
     </div>
     <div class="form" id="form">
@@ -40,31 +40,31 @@
             <button class="button button-form bg-skyblue">(tris - jamb)</button>
         </div>
         {% for column in jamb.form.columns %}
-        <div class="column" id={{column.type}}>
-            {% if column.type == "DOWNWARDS" %}
+        <div class="column" id={{column.label}}>
+            {% if column.label == "DOWNWARDS" %}
             <button class="button button-form image-container"
                 style="background-image: url(../static/images/column/DOWNWARDS.png);"></button>
             {% endif %}
-            {% if column.type == "UPWARDS" %}
+            {% if column.label == "UPWARDS" %}
             <button class="button button-form image-container"
                 style="background-image: url(../static/images/column/UPWARDS.png);"></button>
             {% endif %}
-            {% if column.type == "ANY_DIRECTION" %}
+            {% if column.label == "ANY_DIRECTION" %}
             <button class="button button-form image-container"
                 style="background-image: url(../static/images/column/ANY_DIRECTION.png);"></button>
             {% endif %}
-            {% if column.type == "ANNOUNCEMENT" %}
+            {% if column.label == "ANNOUNCEMENT" %}
             <button class="button button-form image-container"
                 style="background-image: url(../static/images/column/ANNOUNCEMENT.png);"></button>
             {% endif %}
             {% for box in column.boxes %}
-            {% if box.type == "MAX" %}
+            {% if box.label == "MAX" %}
             <button class="button button-form bg-skyblue"></button>
             {% endif %}
-            {% if box.type == "TRIPS" %}
+            {% if box.label == "TRIPS" %}
             <button class="button button-form bg-skyblue"></button>
             {% endif %}
-            <button class="button button-form box" id="BOX-{{column.type}}-{{box.type}}">
+            <button class="button button-form box" id="BOX-{{column.order}}-{{box.order}}">
                 {% if box.filled %}
                 {{box.value}}
                 {% endif %}
@@ -74,8 +74,7 @@
         </div>
         {% endfor %}
         <div class="column">
-            <button class="button button-form button-roll-dice image-container bg-lightpink" id="ROLL-DICE-BUTTON"
-                style="background-image: url(../static/images/misc/roll_{{jamb.roll_count}}.png);"></button>
+            <button class="button button-form button-roll-dice image-container bg-lightpink" id="ROLL-DICE-BUTTON"></button>
             <button class="button button-form bg-skyblue"></button>
             <button class="button button-form button-restart image-container bg-lightpink" id="RESTART-BUTTON"
                 style="background-image: url(../static/images/misc/restart.png);"></button>
