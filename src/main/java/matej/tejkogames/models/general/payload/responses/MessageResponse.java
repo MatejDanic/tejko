@@ -1,6 +1,6 @@
-package matej.tejkogames.models.payload.responses;
+package matej.tejkogames.models.general.payload.responses;
 
-import matej.tejkogames.models.enums.MessageType;
+import matej.tejkogames.models.general.enums.MessageType;
 
 public class MessageResponse {
 

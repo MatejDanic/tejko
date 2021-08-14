@@ -7,8 +7,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +15,9 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import matej.tejkogames.api.services.ExceptionLogService;
 import matej.tejkogames.api.services.UserDetailsServiceImpl;
+import matej.tejkogames.models.general.ExceptionLog;
 import matej.tejkogames.utils.JwtUtil;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
@@ -28,8 +28,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 	@Autowired
 	private UserDetailsServiceImpl userDetailsService;
 
-	private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
-
+	@Autowired
+	private ExceptionLogService exceptionLogService;
+	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
@@ -45,8 +46,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
-		} catch (Exception exc) {
-			logger.error("Cannot set user authentication: {}", exc);
+		} catch (Exception exception) {
+			exceptionLogService.save(new ExceptionLog("Cannot set user authentication: " + exception.getMessage()));
 		}
 
 		filterChain.doFilter(request, response);

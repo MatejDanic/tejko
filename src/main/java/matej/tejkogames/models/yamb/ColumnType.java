@@ -1,5 +1,10 @@
 package matej.tejkogames.models.yamb;
 
-public class ColumnType {
+public enum ColumnType {
+
+    DOWNWARDS,
+    UPWARDS,
+    FREE,
+    ANNOUNCEMENT
     
 }

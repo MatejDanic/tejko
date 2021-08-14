@@ -14,8 +14,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import matej.tejkogames.api.services.ExceptionLogService;
-import matej.tejkogames.models.ExceptionLog;
-import matej.tejkogames.models.UserDetailsImpl;
+import matej.tejkogames.models.general.ExceptionLog;
+import matej.tejkogames.models.general.UserDetailsImpl;
 
 @Component
 public class JwtUtil {

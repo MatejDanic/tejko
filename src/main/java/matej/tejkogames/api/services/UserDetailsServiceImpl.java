@@ -7,9 +7,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import matej.tejkogames.models.User;
-import matej.tejkogames.models.UserDetailsImpl;
 import matej.tejkogames.api.repositories.UserRepository;
+import matej.tejkogames.models.general.User;
+import matej.tejkogames.models.general.UserDetailsImpl;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {

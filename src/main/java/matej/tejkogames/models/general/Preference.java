@@ -1,4 +1,4 @@
-package matej.tejkogames.models;
+package matej.tejkogames.models.general;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.springframework.data.rest.core.annotation.RestResource;
 
-import matej.tejkogames.models.enums.Theme;
+import matej.tejkogames.models.general.enums.Theme;
 
 @Entity
 @Table

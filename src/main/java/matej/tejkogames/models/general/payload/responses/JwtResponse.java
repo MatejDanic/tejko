@@ -1,4 +1,4 @@
-package matej.tejkogames.models.payload.responses;
+package matej.tejkogames.models.general.payload.responses;
 
 import java.util.List;
 

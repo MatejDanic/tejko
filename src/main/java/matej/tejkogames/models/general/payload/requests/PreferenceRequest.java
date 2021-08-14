@@ -1,6 +1,6 @@
-package matej.tejkogames.models.payload.requests;
+package matej.tejkogames.models.general.payload.requests;
 
-import matej.tejkogames.models.enums.Theme;
+import matej.tejkogames.models.general.enums.Theme;
 
 public class PreferenceRequest {
 

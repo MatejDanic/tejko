@@ -1,4 +1,4 @@
-package matej.tejkogames.models;
+package matej.tejkogames.models.general;
 
 // import java.util.List;
 import java.util.Set;

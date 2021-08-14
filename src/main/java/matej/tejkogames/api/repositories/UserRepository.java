@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import matej.tejkogames.models.User;
+import matej.tejkogames.models.general.User;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
     

@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 import matej.tejkogames.api.repositories.PreferenceRepository;
 import matej.tejkogames.api.repositories.RoleRepository;
 import matej.tejkogames.api.repositories.UserRepository;
-import matej.tejkogames.models.User;
-import matej.tejkogames.models.Role;
-import matej.tejkogames.models.Preference;
-import matej.tejkogames.models.payload.requests.PreferenceRequest;
+import matej.tejkogames.models.general.Preference;
+import matej.tejkogames.models.general.Role;
+import matej.tejkogames.models.general.User;
+import matej.tejkogames.models.general.payload.requests.PreferenceRequest;
 
 /**
  * Service Class for managing {@link User} repostiory

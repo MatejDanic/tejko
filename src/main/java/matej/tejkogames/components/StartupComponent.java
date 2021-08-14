@@ -8,7 +8,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import matej.tejkogames.api.repositories.RoleRepository;
-import matej.tejkogames.models.Role;
+import matej.tejkogames.models.general.Role;
 
 @Component
 public class StartupComponent implements ApplicationRunner {

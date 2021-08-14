@@ -13,17 +13,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import matej.tejkogames.models.Role;
-import matej.tejkogames.models.User;
-import matej.tejkogames.models.payload.requests.LoginRequest;
-import matej.tejkogames.models.payload.requests.RegisterRequest;
-import matej.tejkogames.models.payload.responses.JwtResponse;
+import matej.tejkogames.models.general.Role;
+import matej.tejkogames.models.general.User;
+import matej.tejkogames.models.general.UserDetailsImpl;
+import matej.tejkogames.models.general.payload.requests.LoginRequest;
+import matej.tejkogames.models.general.payload.requests.RegisterRequest;
+import matej.tejkogames.models.general.payload.responses.JwtResponse;
 import matej.tejkogames.api.repositories.RoleRepository;
 import matej.tejkogames.api.repositories.UserRepository;
 import matej.tejkogames.api.services.AuthService;
 import matej.tejkogames.exceptions.UsernameTakenException;
 import matej.tejkogames.utils.JwtUtil;
-import matej.tejkogames.models.UserDetailsImpl;
 
 @Service
 public class AuthService {

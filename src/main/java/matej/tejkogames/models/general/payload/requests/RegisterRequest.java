@@ -1,4 +1,4 @@
-package matej.tejkogames.models.payload.requests;
+package matej.tejkogames.models.general.payload.requests;
 
 import java.util.Set;
 

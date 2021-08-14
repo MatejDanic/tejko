@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import matej.tejkogames.api.services.ExceptionLogService;
 import matej.tejkogames.api.services.UserService;
 import matej.tejkogames.exceptions.InvalidOwnershipException;
-import matej.tejkogames.models.payload.requests.PreferenceRequest;
-import matej.tejkogames.models.payload.responses.MessageResponse;
+import matej.tejkogames.models.general.ExceptionLog;
+import matej.tejkogames.models.general.payload.requests.PreferenceRequest;
+import matej.tejkogames.models.general.payload.responses.MessageResponse;
 import matej.tejkogames.utils.JwtUtil;
 
 @RestController
@@ -30,14 +32,18 @@ public class UserController {
 	UserService userService;
 
 	@Autowired
+	ExceptionLogService exceptionLogService;
+	
+	@Autowired
 	JwtUtil jwtUtil;
 
 	@GetMapping("")
 	public ResponseEntity<Object> getUsers() {
 		try {
 			return new ResponseEntity<>(userService.getUsers(), HttpStatus.OK);
-		} catch (Exception exc) {
-			return new ResponseEntity<>(new MessageResponse(exc.getMessage()), HttpStatus.BAD_REQUEST);
+		} catch (Exception exception) {
+			exceptionLogService.save(new ExceptionLog(exception.getMessage()));
+			return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -45,8 +51,9 @@ public class UserController {
 	public ResponseEntity<Object> getUserById(@PathVariable int id) {
 		try {
 			return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
-		} catch (Exception exc) {
-			return new ResponseEntity<>(new MessageResponse(exc.getMessage()), HttpStatus.BAD_REQUEST);
+		} catch (Exception exception) {
+			exceptionLogService.save(new ExceptionLog(exception.getMessage()));
+			return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -54,8 +61,8 @@ public class UserController {
 	// public ResponseEntity<Object> getUserForm(@PathVariable int id) {
 	// 	try {
 	// 		return new ResponseEntity<>(userService.getUserById(id).getForm(), HttpStatus.OK);
-	// 	} catch (Exception exc) {
-	// 		return new ResponseEntity<>(new MessageResponse(exc.getMessage()), HttpStatus.BAD_REQUEST);
+	// 	} catch (Exception exception) {
+	// 		return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
 	// 	}
 	// }
 
@@ -65,8 +72,9 @@ public class UserController {
 		try {
 			userService.deleteUserById(id);
 			return new ResponseEntity<>(new MessageResponse("Korisnik uspješno izbrisan."), HttpStatus.OK);
-		} catch (Exception exc) {
-			return new ResponseEntity<>(new MessageResponse(exc.getMessage()), HttpStatus.BAD_REQUEST);
+		} catch (Exception exception) {
+			exceptionLogService.save(new ExceptionLog(exception.getMessage()));
+			return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -75,8 +83,9 @@ public class UserController {
 	public ResponseEntity<Object> deleteUserById(@PathVariable int id, @RequestBody String roleLabel) {
 		try {
 			return new ResponseEntity<>(userService.assignRole(id, roleLabel), HttpStatus.OK);
-		} catch (Exception exc) {
-			return new ResponseEntity<>(new MessageResponse(exc.getMessage()), HttpStatus.BAD_REQUEST);
+		} catch (Exception exception) {
+			exceptionLogService.save(new ExceptionLog(exception.getMessage()));
+			return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -84,8 +93,9 @@ public class UserController {
 	public ResponseEntity<Object> getUserPreferences(@PathVariable int id) {
 		try {
 			return new ResponseEntity<>(userService.getUserPreference(id), HttpStatus.OK);
-		} catch (Exception exc) {
-			return new ResponseEntity<>(new MessageResponse(exc.getMessage()), HttpStatus.BAD_REQUEST);
+		} catch (Exception exception) {
+			exceptionLogService.save(new ExceptionLog(exception.getMessage()));
+			return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -97,8 +107,9 @@ public class UserController {
 				throw new InvalidOwnershipException("Korisnik nema ovlasti nad korisničkim računom s id-em " + id);
 			}
 			return new ResponseEntity<>(userService.updateUserPreference(id, preferenceRequest), HttpStatus.OK);
-		} catch (InvalidOwnershipException exc) {
-			return new ResponseEntity<>(new MessageResponse(exc.getMessage()), HttpStatus.BAD_REQUEST);
+		} catch (InvalidOwnershipException exception) {
+			exceptionLogService.save(new ExceptionLog(exception.getMessage()));
+			return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
 		}
 	}
 }
