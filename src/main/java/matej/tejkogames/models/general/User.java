@@ -1,5 +1,6 @@
 package matej.tejkogames.models.general;
 
+import java.util.List;
 // import java.util.List;
 import java.util.Set;
 
@@ -13,15 +14,19 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-// import javax.persistence.OneToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-// import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.springframework.data.rest.core.annotation.RestResource;
+
+import matej.tejkogames.constants.TejkoGamesConstants;
+import matej.tejkogames.models.yamb.Yamb;
+import matej.tejkogames.models.yamb.Score;
 
 @Entity
 @Table(name = "auth_user")
@@ -32,18 +37,18 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // @JsonIgnoreProperties("user")
-    // @OneToMany(mappedBy = "user", cascade = {CascadeType.DETACH,
-    // CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
-    // private List<GameScore> scores;
+    @JsonIgnoreProperties("user")
+    @OneToMany(mappedBy = "user", cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,
+            CascadeType.REMOVE })
+    private List<Score> scores;
 
-    // @JsonIgnore
-    // @OneToOne(mappedBy = "user", cascade = {CascadeType.DETACH,
-    // CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
-    // private GameForm form;
+    @JsonIgnore
+    @OneToOne(mappedBy = "user", cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,
+            CascadeType.REMOVE })
+    private Yamb yamb;
 
     @Column(nullable = false, unique = true)
-    @Size(min = 3, max = 15)
+    @Size(min = TejkoGamesConstants.USERNAME_LENGTH_MIN, max = TejkoGamesConstants.USERNAME_LENGTH_MAX)
     private String username;
 
     @JsonIgnore
@@ -75,21 +80,21 @@ public class User {
         this.id = id;
     }
 
-    // public List<GameScore> getScores() {
-    // return scores;
-    // }
+    public List<Score> getScores() {
+        return scores;
+    }
 
-    // public void setScores(List<GameScore> scores) {
-    // this.scores = scores;
-    // }
+    public void setScores(List<Score> scores) {
+        this.scores = scores;
+    }
 
-    // public GameForm getForm() {
-    // return form;
-    // }
+    public Yamb getYamb() {
+        return yamb;
+    }
 
-    // public void setForm(GameForm form) {
-    // this.form = form;
-    // }
+    public void setYamb(Yamb yamb) {
+        this.yamb = yamb;
+    }
 
     public String getUsername() {
         return username;

@@ -4,19 +4,18 @@ import java.util.List;
 
 public class Column {
 
-    
     private ColumnType type;
     private List<Box> boxes;
-    private int numberSum;
-    private int differenceSum;
-    private int labelSum;
+    private int sumOne;
+    private int sumTwo;
+    private int sumThree;
 
     public Column(ColumnType type, List<Box> boxes) {
         this.type = type;
         this.boxes = boxes;
-        this.numberSum = 0;
-        this.differenceSum = 0;
-        this.labelSum = 0;
+        this.sumOne = 0;
+        this.sumTwo = 0;
+        this.sumThree = 0;
     }
 
     public ColumnType getType() {
@@ -35,33 +34,33 @@ public class Column {
         this.boxes = boxes;
     }
     
-    public int getNumberSum() {
-        return this.numberSum;
+    public int getSumOne() {
+        return this.sumOne;
     }
 
-    public void setNumberSum(int numberSum) {
-        this.numberSum = numberSum;
+    public void setSumOne(int sumOne) {
+        this.sumOne = sumOne;
     }
     
-    public int getDifferenceSum() {
-        return this.differenceSum;
+    public int getSumTwo() {
+        return this.sumTwo;
     }
 
-    public void setDifferenceSum(int differenceSum) {
-        this.differenceSum = differenceSum;
+    public void setSumTwo(int sumTwo) {
+        this.sumTwo = sumTwo;
     }
 
-    public int getLabelSum() {
-        return this.labelSum;
+    public int getSumThree() {
+        return this.sumThree;
     }
 
-    public void setLabelSum(int labelSum) {
-        this.labelSum = labelSum;
+    public void setSumThree(int sumThree) {
+        this.sumThree = sumThree;
     }
 
-    public Box getBoxByType(String boxTypeString) {
+    public Box getBoxByType(BoxType boxType) {
 		for (Box box : this.boxes) {
-			if (box.getType().toString().equals(boxTypeString)) {
+			if (box.getType() == boxType) {
 				return box;
 			}
 		}
@@ -78,25 +77,25 @@ public class Column {
     }
 
     public void updateSums() {
-        this.numberSum = 0;
-        this.differenceSum = 0;
-        this.labelSum = 0;
+        this.sumOne = 0;
+        this.sumTwo = 0;
+        this.sumThree = 0;
         for (Box box : this.boxes) {
             if (box.getType() == BoxType.ONES || box.getType() == BoxType.TWOS || 
                 box.getType() == BoxType.THREES || box.getType() == BoxType.FOURS || 
                 box.getType() == BoxType.FIVES || box.getType() == BoxType.SIXES) {
-                numberSum += box.getValue();
+                sumOne += box.getValue();
             } else if (box.getType() == BoxType.TRIPS || box.getType() == BoxType.STRAIGHT || 
                         box.getType() == BoxType.BOAT || box.getType() == BoxType.CARRIAGE || 
                         box.getType() == BoxType.YAMB) {
-                labelSum += box.getValue();
+                sumThree += box.getValue();
             }
         }
-        Box ones = this.getBoxByType(BoxType.ONES.toString());
-        Box max = this.getBoxByType(BoxType.MAX.toString());
-        Box min = this.getBoxByType(BoxType.MIN.toString());
+        Box ones = this.getBoxByType(BoxType.ONES);
+        Box max = this.getBoxByType(BoxType.MAX);
+        Box min = this.getBoxByType(BoxType.MIN);
         if (ones.isFilled() && max.isFilled() && min.isFilled()) {
-            this.differenceSum = ones.getValue() * (max.getValue() - min.getValue());
+            this.sumTwo = ones.getValue() * (max.getValue() - min.getValue());
         }
     }
     

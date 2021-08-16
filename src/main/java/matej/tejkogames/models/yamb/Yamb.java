@@ -1,64 +1,93 @@
 package matej.tejkogames.models.yamb;
 
-import java.util.Set;
-
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import matej.tejkogames.factories.YambFormFactory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import org.springframework.data.rest.core.annotation.RestResource;
+
+import matej.tejkogames.constants.YambConstants;
+import matej.tejkogames.models.general.User;
+import matej.tejkogames.utils.YambUtil;
 
 @Entity
-@Table(name="game_yamb")
+@Table(name = "game_yamb")
+@RestResource(rel = "yambs", path = "yambs")
 public class Yamb {
 
-    private GameType type;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+	@OneToOne
+    @JsonIgnore
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
+
+    @Column
+    private YambType type;
+
+    @Column
     private int numberOfColumns;
+    
+    @Column
     private int numberOfDice;
-    private Form form;
+    
+    @Lob
+    private String form;
+
+    @Column
     private BoxType announcement;
-    private Set<Dice> dice;
+    
+    @Lob
+    private String diceSet;
+    
+    @Column
     private int rollCount;
 
-    public Yamb(GameType type, int numberOfColumns, int numberOfDice) {
-        if (type == GameType.CUSTOM) {
-            this.form = YambFormFactory.generateYambForm(numberOfColumns, numberOfDice);
-        } else {
-            this.form = YambFormFactory.generateYambForm();
+    public Yamb(User user, YambType type, int numberOfColumns, int numberOfDice) {
+        if (type == YambType.CLASSIC) {
+            numberOfColumns = YambConstants.NUMBER_OF_COLUMNS;
+            numberOfDice = YambConstants.NUMBER_OF_DICE;
         }
+        this.user = user;
+        this.form = YambUtil.generateYambForm(type, YambConstants.NUMBER_OF_COLUMNS, YambConstants.NUMBER_OF_DICE);
         this.announcement = null;
         this.rollCount = 0;
     }
 
-    public Form getForm() {
-        return form;
+    public Yamb() {}
+
+    public int getId() {
+        return id;
     }
 
-    public void setForm(Form form) {
-        this.form = form;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public BoxType getAnnouncement() {
-        return announcement;
+    public User getUser() {
+        return user;
     }
 
-    public void setAnnouncement(BoxType announcement) {
-        this.announcement = announcement;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public Set<Dice> getDice() {
-        return dice;
+    public YambType getType() {
+        return type;
     }
 
-    public void setDice(Set<Dice> dice) {
-        this.dice = dice;
-    }
-
-    public int getRollCount() {
-        return rollCount;
-    }
-
-    public void setRollCount(int rollCount) {
-        this.rollCount = rollCount;
+    public void setType(YambType type) {
+        this.type = type;
     }
 
     public int getNumberOfColumns() {
@@ -77,12 +106,37 @@ public class Yamb {
         this.numberOfDice = numberOfDice;
     }
 
-    public GameType getType() {
-        return type;
+    public String getForm() {
+        return form;
     }
 
-    public void setType(GameType type) {
-        this.type = type;
+    public void setForm(String form) {
+        this.form = form;
     }
 
+    public BoxType getAnnouncement() {
+        return announcement;
+    }
+
+    public void setAnnouncement(BoxType announcement) {
+        this.announcement = announcement;
+    }
+
+    public String getDiceSet() {
+        return diceSet;
+    }
+
+    public void setDiceSet(String diceSet) {
+        this.diceSet = diceSet;
+    }
+
+    public int getRollCount() {
+        return rollCount;
+    }
+
+    public void setRollCount(int rollCount) {
+        this.rollCount = rollCount;
+    }
+
+    
 }

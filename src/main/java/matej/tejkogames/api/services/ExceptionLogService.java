@@ -12,8 +12,8 @@ public class ExceptionLogService {
     @Autowired
     ExceptionLogRepository exceptionLogRepository;
     
-    public ExceptionLog save(ExceptionLog exceptionLog) {
-        return exceptionLogRepository.save(exceptionLog);
+    public ExceptionLog save(Throwable exception) {
+        return exceptionLogRepository.save(new ExceptionLog(exception.getMessage()));
     }
 
     public void deleteAllExceptionLogs() {

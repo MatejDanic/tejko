@@ -3,29 +3,98 @@ package matej.tejkogames.utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import matej.tejkogames.constants.YambConstants;
-import matej.tejkogames.models.yamb.Dice;
+import matej.tejkogames.models.yamb.Box;
 import matej.tejkogames.models.yamb.BoxType;
+import matej.tejkogames.models.yamb.Column;
+import matej.tejkogames.models.yamb.ColumnType;
+import matej.tejkogames.models.yamb.Dice;
+import matej.tejkogames.models.yamb.YambForm;
+import matej.tejkogames.models.yamb.YambType;
 
-/**
- * This utility class contains static methods used calculating scores based on
- * rolled dice values and box type to be filled.
- *
- * @author MatejDanic
- * @version 1.0
- * @since 2020-08-13
- */
-public final class ScoreUtil {
+public class YambUtil {
 
-	/**
+    private static ObjectMapper mapper = new ObjectMapper();
+
+    public static String generateYambForm(YambType type, int numberOfColumns, int numberOfDice) {
+
+        List<Column> columnList = new ArrayList<>();
+        for (int i = 1; i <= numberOfColumns; i++) {
+            ColumnType columnType = type == YambType.CLASSIC ? ColumnType.values()[i - 1] : ColumnType.FREE;
+            List<Box> boxList = generateBoxList(columnType);
+            Column column = new Column(columnType, boxList);
+            columnList.add(column);
+        }
+
+        YambForm form = new YambForm(columnList);
+        return formToFormString(form);
+    }
+
+    public static String formToFormString(YambForm form) {
+        String formString = "";
+        try {
+            formString = mapper.writeValueAsString(form);
+        } catch (JsonProcessingException exception) {
+            System.out.println(exception.getMessage());
+        }
+        return formString;
+    }
+
+    public static String diceSetToDiceSetString(Set<Dice> diceSet) {
+        String diceSetString = "";
+        try {
+            diceSetString = mapper.writeValueAsString(diceSet);
+        } catch (JsonProcessingException exception) {
+            System.out.println(exception.getMessage());
+        }
+        return diceSetString;
+    }
+
+    private static List<Box> generateBoxList(ColumnType columnType) {
+        List<Box> boxList = new ArrayList<>();
+        for (BoxType boxType : BoxType.values()) {
+            boolean available = (columnType == ColumnType.DOWNWARDS && boxType == BoxType.ONES
+                    || columnType == ColumnType.UPWARDS && boxType == BoxType.YAMB || columnType == ColumnType.FREE
+                    || columnType == ColumnType.ANNOUNCEMENT);
+            Box box = new Box(boxType, available);
+            boxList.add(box);
+        }
+        return boxList;
+    }
+
+    public static YambForm formStringToForm(String formString) {
+        try {
+            return mapper.readValue(formString, YambForm.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Set<Dice> diceSetStringToDiceSet(String diceSetString) {
+        try {
+            return mapper.readValue(diceSetString, new TypeReference<Set<Dice>>() {
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
 	 * Calculates score based on rolled dice values and type of box to be filled.
 	 * 
 	 * @param diceList the values of rolled dice
 	 * @param boxType  the type of box to be filled
 	 * @return {@code int} the calculated score result
 	 */
-	public static int calculateScore(List<Dice> diceList, BoxType boxType) {
+	public static int calculateScore(Set<Dice> diceList, BoxType boxType) {
 		int result = 0; // initialize variable for storing and returning score result to zero
 		List<Integer> diceValues = new ArrayList<>(diceList.size());
 		diceList.forEach((dice) -> diceValues.add(dice.getValue()));
@@ -163,4 +232,5 @@ public final class ScoreUtil {
 		}
 		return 0;
 	}
+
 }

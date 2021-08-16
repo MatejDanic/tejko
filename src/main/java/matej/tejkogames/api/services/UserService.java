@@ -3,7 +3,6 @@ package matej.tejkogames.api.services;
 import java.util.List;
 import java.util.Set;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -27,20 +26,20 @@ import matej.tejkogames.models.general.payload.requests.PreferenceRequest;
 public class UserService {
 
     @Autowired
-    UserRepository userRepo;
+    UserRepository userRepository;
 
     @Autowired
-    RoleRepository roleRepo;
+    RoleRepository roleRepository;
 
     @Autowired
-    PreferenceRepository prefRepo;
+    PreferenceRepository prefRepository;
 
     public Preference getUserPreference(int userId) {
-        return userRepo.findById(userId).get().getPreference();
+        return userRepository.findById(userId).get().getPreference();
     }
 
     public Preference updateUserPreference(int userId, PreferenceRequest prefRequest) {
-        User user = userRepo.findById(userId).get();
+        User user = userRepository.findById(userId).get();
         Preference preference = user.getPreference();
         if (preference != null) {
             if (prefRequest.getVolume() != null) {
@@ -57,35 +56,35 @@ public class UserService {
             }
         }
         user.setPreference(preference);
-        userRepo.save(user);
+        userRepository.save(user);
         return user.getPreference();
     }
 
     public List<User> getUsers() {
-        return userRepo.findAll();
+        return userRepository.findAll();
     }
 
     public void deleteUserById(int id) {
-        userRepo.deleteById(id);
+        userRepository.deleteById(id);
     }
 
     public User getUserById(int id) {
-        return userRepo.findById(id).get();
+        return userRepository.findById(id).get();
     }
 
     // public List<GameScore> getUserScores(int id) {
-    //     return userRepo.findById(id).get().getScores();
+    // return userRepo.findById(id).get().getScores();
     // }
 
-    // public boolean checkFormOwnership(String username, int formId) {
-    //     User user = userRepo.findByUsername(username)
-    //             .orElseThrow(() -> new UsernameNotFoundException("Korisnik s imenom " + username + " nije pronađen."));
-    //     return user.getForm().getId() == formId;
-    // }
+    public boolean checkYambOwnership(String username, int yambId) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Korisnik s imenom " + username + " nije pronađen."));
+        return user.getYamb().getId() == yambId;
+    }
 
     public boolean checkOwnership(String username, int userId) {
 
-        User user = userRepo.findByUsername(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Korisnik s imenom " + username + " nije pronađen."));
         return user.getId() == userId;
 
@@ -93,15 +92,16 @@ public class UserService {
 
     public Set<Role> assignRole(int userId, String roleLabel) {
 
-        User user = userRepo.findById(userId).get();
+        User user = userRepository.findById(userId).get();
         Set<Role> roles = user.getRoles();
-        
-        roles.add(roleRepo.findByLabel(roleLabel).orElseThrow(() -> new RuntimeException("Uloga '" + roleLabel + "' nije pronađena.")));
-        
+
+        roles.add(roleRepository.findByLabel(roleLabel)
+                .orElseThrow(() -> new RuntimeException("Uloga '" + roleLabel + "' nije pronađena.")));
+
         user.setRoles(roles);
-        userRepo.save(user);
-        
+        userRepository.save(user);
+
         return user.getRoles();
-        
+
     }
 }

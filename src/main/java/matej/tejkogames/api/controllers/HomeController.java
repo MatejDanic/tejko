@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import matej.tejkogames.api.services.ExceptionLogService;
-import matej.tejkogames.models.general.ExceptionLog;
 
 @RestController
 @CrossOrigin(origins = {"http://tejko.games", "http://www.tejko.games", "https://tejko-games.herokuapp.com" })
@@ -26,7 +25,7 @@ public class HomeController {
 		try {
 			response.sendRedirect("/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config");
 		} catch (IOException exception) {
-			exceptionLogService.save(new ExceptionLog(exception.getMessage()));
+			exceptionLogService.save(exception);
 			exception.printStackTrace();
 		}
 	}

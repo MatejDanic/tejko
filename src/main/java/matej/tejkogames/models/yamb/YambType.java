@@ -1,6 +1,6 @@
 package matej.tejkogames.models.yamb;
 
-public enum GameType {
+public enum YambType {
 
     CLASSIC, CUSTOM
     

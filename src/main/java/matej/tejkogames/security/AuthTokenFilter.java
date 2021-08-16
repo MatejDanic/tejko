@@ -17,13 +17,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import matej.tejkogames.api.services.ExceptionLogService;
 import matej.tejkogames.api.services.UserDetailsServiceImpl;
-import matej.tejkogames.models.general.ExceptionLog;
 import matej.tejkogames.utils.JwtUtil;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
 
 	@Autowired
-	private JwtUtil jwtUtils;
+	private JwtUtil jwtUtil;
 
 	@Autowired
 	private UserDetailsServiceImpl userDetailsService;
@@ -36,8 +35,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		try {
 			String jwt = parseJwt(request);
-			if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-				String username = jwtUtils.getUsernameFromJwtToken(jwt);
+			if (jwt != null && jwtUtil.validateJwtToken(jwt)) {
+				String username = jwtUtil.getUsernameFromJwtToken(jwt);
 
 				UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -47,7 +46,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 		} catch (Exception exception) {
-			exceptionLogService.save(new ExceptionLog("Cannot set user authentication: " + exception.getMessage()));
+			exceptionLogService.save(exception);
 		}
 
 		filterChain.doFilter(request, response);

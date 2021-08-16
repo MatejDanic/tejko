@@ -1,8 +1,9 @@
 package matej.tejkogames.models.yamb;
 
+import java.io.Serializable;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Dice {
+public class Dice implements Serializable {
     
     private int value;
     private int order;
@@ -41,6 +42,5 @@ public class Dice {
 	public void roll() {
 		this.value = ThreadLocalRandom.current().nextInt(1, 7);
 	}
-	
 
 }

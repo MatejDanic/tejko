@@ -12,7 +12,6 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import matej.tejkogames.api.services.ExceptionLogService;
-import matej.tejkogames.models.general.ExceptionLog;
 
 @Component
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
@@ -22,8 +21,8 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException authException) throws IOException, ServletException {
-		exceptionLogService.save(new ExceptionLog("Neovlašten pristup: " + authException.getMessage()));
+			AuthenticationException exception) throws IOException, ServletException {
+		exceptionLogService.save(exception);
 
 		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Neovlašten pristup");
 	}

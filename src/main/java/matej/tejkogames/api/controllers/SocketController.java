@@ -15,7 +15,6 @@ import matej.tejkogames.api.services.ExceptionLogService;
 import matej.tejkogames.api.services.SocketService;
 import matej.tejkogames.api.services.UserService;
 import matej.tejkogames.utils.JwtUtil;
-import matej.tejkogames.models.general.ExceptionLog;
 import matej.tejkogames.models.general.enums.MessageType;
 import matej.tejkogames.models.general.payload.requests.MessageRequest;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
@@ -33,7 +32,7 @@ public class SocketController {
     SocketService socketService;
 
     @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
+    SimpMessagingTemplate simpMessagingTemplate;
 
     @Autowired
     ExceptionLogService exceptionLogService;
@@ -48,7 +47,7 @@ public class SocketController {
             }
             return new MessageResponse(message.getSubject() + ", " + message.getSender() + "!", MessageType.GREETING);
         } catch (Exception exception) {
-            exceptionLogService.save(new ExceptionLog(exception.getMessage()));
+            exceptionLogService.save(exception);
             return new MessageResponse(exception.getMessage());
         }
 
@@ -64,7 +63,7 @@ public class SocketController {
                         message.getSender());
             }
         } catch (Exception exception) {
-            exceptionLogService.save(new ExceptionLog(exception.getMessage()));
+            exceptionLogService.save(exception);
             return new MessageResponse(exception.getMessage());
         }
         return null;
@@ -84,7 +83,7 @@ public class SocketController {
                         "/topic/challenge", response);
             }
         } catch (Exception exception) {
-            exceptionLogService.save(new ExceptionLog(exception.getMessage()));
+            exceptionLogService.save(exception);
         }
     }
 }

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import matej.tejkogames.api.services.ExceptionLogService;
-import matej.tejkogames.models.general.ExceptionLog;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
 
 @RestController
@@ -29,7 +28,7 @@ public class ExceptionLogController {
 			exceptionLogService.deleteAllExceptionLogs();
 			return new ResponseEntity<>(new MessageResponse("All Exception Logs have been deleted."), HttpStatus.OK);
 		} catch (Exception exception) {
-			exceptionLogService.save(new ExceptionLog(exception.getMessage()));
+			exceptionLogService.save(exception);
 			return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
 		}
 	}
