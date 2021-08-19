@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import matej.tejkogames.api.services.ExceptionLogService;
+import matej.tejkogames.models.general.enums.MessageType;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
 
 @RestController
@@ -22,14 +23,14 @@ public class ExceptionLogController {
     ExceptionLogService exceptionLogService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
-	@DeleteMapping("/")
+	@DeleteMapping("")
 	public ResponseEntity<Object> deleteAllExceptionLogs() {
 		try {
 			exceptionLogService.deleteAllExceptionLogs();
 			return new ResponseEntity<>(new MessageResponse("All Exception Logs have been deleted."), HttpStatus.OK);
 		} catch (Exception exception) {
 			exceptionLogService.save(exception);
-			return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(new MessageResponse("Exception Log Purge", MessageType.ERROR, exception.getMessage()), HttpStatus.BAD_REQUEST);
 		}
 	}
 

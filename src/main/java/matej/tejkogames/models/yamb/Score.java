@@ -33,7 +33,7 @@ public class Score {
     private UUID id;
 
 	@ManyToOne
-    @JsonIgnoreProperties({"scores", "form"})
+    @JsonIgnoreProperties({"scores", "yamb"})
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 	

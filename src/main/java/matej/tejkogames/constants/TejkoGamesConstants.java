@@ -9,4 +9,6 @@ public class TejkoGamesConstants {
     public static final String ORIGIN_WWW = "https://www.tejko.games";
     public static final String ORIGIN_HEROKU = "https://tejko-games.herokuapp.com";
 
+    public static final int EXCEPTION_LOG_SIZE = 1024;
+
 }

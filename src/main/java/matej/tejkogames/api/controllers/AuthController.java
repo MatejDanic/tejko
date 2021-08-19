@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import matej.tejkogames.models.general.enums.MessageType;
 import matej.tejkogames.models.general.payload.requests.LoginRequest;
 import matej.tejkogames.models.general.payload.requests.RegisterRequest;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
@@ -33,8 +34,8 @@ public class AuthController {
         try {
             return new ResponseEntity<>(authService.login(loginRequest), HttpStatus.OK);
         } catch (Exception exception) {
-            exceptionLogService.save(exception);
-            return new ResponseEntity<>(new MessageResponse("Prijava", exception.getMessage()), HttpStatus.BAD_REQUEST);
+            // exceptionLogService.save(exception);
+            return new ResponseEntity<>(new MessageResponse("Login", MessageType.ERROR, exception.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -42,10 +43,10 @@ public class AuthController {
     public ResponseEntity<Object> register(@Valid @RequestBody RegisterRequest registerRequest) {
         try {
             authService.register(registerRequest);
-            return new ResponseEntity<>(new MessageResponse("Registracija", "Korisnik uspješno registriran"), HttpStatus.OK);
+            return new ResponseEntity<>(new MessageResponse("Register", "Korisnik uspješno registriran"), HttpStatus.OK);
         } catch (Exception exception) {
-            exceptionLogService.save(exception);
-            return new ResponseEntity<>(new MessageResponse("Registracija", exception.getMessage()), HttpStatus.BAD_REQUEST);
+            // exceptionLogService.save(exception);
+            return new ResponseEntity<>(new MessageResponse("Register", MessageType.ERROR, exception.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
     

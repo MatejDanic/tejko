@@ -48,6 +48,11 @@ public class User {
             CascadeType.REMOVE })
     private List<Score> scores;
 
+    @JsonIgnoreProperties("user")
+    @OneToMany(mappedBy = "user", cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,
+            CascadeType.REMOVE })
+    private List<ExceptionLog> exceptions;
+
     @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,
             CascadeType.REMOVE })

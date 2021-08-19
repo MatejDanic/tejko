@@ -48,7 +48,7 @@ public class SocketController {
             return new MessageResponse(message.getSubject() + ", " + message.getSender() + "!", MessageType.GREETING);
         } catch (Exception exception) {
             exceptionLogService.save(exception);
-            return new MessageResponse(exception.getMessage());
+            return new MessageResponse("Greeting", MessageType.ERROR, exception.getMessage());
         }
 
     }
@@ -64,7 +64,7 @@ public class SocketController {
             }
         } catch (Exception exception) {
             exceptionLogService.save(exception);
-            return new MessageResponse(exception.getMessage());
+            return new MessageResponse("Message", MessageType.ERROR, exception.getMessage());
         }
         return null;
 

@@ -26,7 +26,6 @@ public class HomeController {
 			response.sendRedirect("/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config");
 		} catch (IOException exception) {
 			exceptionLogService.save(exception);
-			exception.printStackTrace();
 		}
 	}
 }
