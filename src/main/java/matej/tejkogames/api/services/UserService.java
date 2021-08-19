@@ -2,6 +2,7 @@ package matej.tejkogames.api.services;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,11 +35,11 @@ public class UserService {
     @Autowired
     PreferenceRepository prefRepository;
 
-    public Preference getUserPreference(int userId) {
+    public Preference getUserPreference(UUID userId) {
         return userRepository.findById(userId).get().getPreference();
     }
 
-    public Preference updateUserPreference(int userId, PreferenceRequest prefRequest) {
+    public Preference updateUserPreference(UUID userId, PreferenceRequest prefRequest) {
         User user = userRepository.findById(userId).get();
         Preference preference = user.getPreference();
         if (preference != null) {
@@ -64,11 +65,11 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void deleteUserById(int id) {
+    public void deleteUserById(UUID id) {
         userRepository.deleteById(id);
     }
 
-    public User getUserById(int id) {
+    public User getUserById(UUID id) {
         return userRepository.findById(id).get();
     }
 
@@ -76,13 +77,13 @@ public class UserService {
     // return userRepo.findById(id).get().getScores();
     // }
 
-    public boolean checkYambOwnership(String username, int yambId) {
+    public boolean checkYambOwnership(String username, UUID yambId) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Korisnik s imenom " + username + " nije pronađen."));
         return user.getYamb().getId() == yambId;
     }
 
-    public boolean checkOwnership(String username, int userId) {
+    public boolean checkOwnership(String username, UUID userId) {
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Korisnik s imenom " + username + " nije pronađen."));
@@ -90,7 +91,7 @@ public class UserService {
 
     }
 
-    public Set<Role> assignRole(int userId, String roleLabel) {
+    public Set<Role> assignRole(UUID userId, String roleLabel) {
 
         User user = userRepository.findById(userId).get();
         Set<Role> roles = user.getRoles();

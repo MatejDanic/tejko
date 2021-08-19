@@ -1,11 +1,11 @@
 package matej.tejkogames.models.yamb;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -13,6 +13,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import matej.tejkogames.models.general.User;
@@ -23,8 +24,13 @@ import matej.tejkogames.models.general.User;
 public class Score {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+        name = "UUID",
+        strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
 
 	@ManyToOne
     @JsonIgnoreProperties({"scores", "form"})
@@ -41,14 +47,6 @@ public class Score {
 		this.user = user;
 		this.value = value;
 		this.date = LocalDateTime.now();
-	}
-
-	public int getId() {
-		return id;
-	}
-	
-	public void setId(int id) {
-		this.id = id;
 	}
 	
 	public User getUser() {

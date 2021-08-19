@@ -15,6 +15,8 @@ public class Dice implements Serializable {
         this.held = false;
     }
 
+    public Dice() { }
+
     public int getValue() {
         return this.value;
     }

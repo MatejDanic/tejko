@@ -20,7 +20,7 @@ public class StartupComponent implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
 
         if (roleRepo.findAll().size() == 0) {
-            roleRepo.saveAll(Arrays.asList(new Role(1, "ADMIN"), new Role(2, "USER"), new Role(3, "MODERATOR")));
+            roleRepo.saveAll(Arrays.asList(new Role(1, "ADMIN", ""), new Role(2, "USER", ""), new Role(3, "MODERATOR", "")));
         }
 
         // if (columnTypeRepo.findAll().size() == 0) {

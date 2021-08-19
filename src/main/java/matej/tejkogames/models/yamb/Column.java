@@ -2,6 +2,8 @@ package matej.tejkogames.models.yamb;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Column {
 
     private ColumnType type;
@@ -67,6 +69,7 @@ public class Column {
 		return null;
 	}
 
+    @JsonIgnore
     public boolean isFinished() {
         for (Box box : this.boxes) {
             if (!box.isFilled()) {

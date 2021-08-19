@@ -2,6 +2,8 @@ package matej.tejkogames.models.yamb;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import matej.tejkogames.constants.YambConstants;
 
 public class YambForm {
@@ -26,6 +28,8 @@ public class YambForm {
         this.totalSum = 0;
         this.availableBoxes = this.columns.size() * YambConstants.NUMBER_OF_BOXES;
     }
+
+    public YambForm() { }
 
     public List<Column> getColumns() {
         return this.columns;
@@ -75,6 +79,7 @@ public class YambForm {
         this.availableBoxes = availableBoxes;
     }
 
+    @JsonIgnore
     public boolean isAnnouncementRequired() {
         for (Column column : this.columns) {
             if (column.getType() != ColumnType.ANNOUNCEMENT && !column.isFinished()) {

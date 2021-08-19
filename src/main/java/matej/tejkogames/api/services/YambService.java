@@ -2,6 +2,7 @@ package matej.tejkogames.api.services;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -46,16 +47,20 @@ public class YambService {
      * 
      * @throws UsernameNotFoundException if user with given username does not exist
      */
-    public Yamb initializeYamb(String username, YambType type, int numberOfColumns, int numberOfDice)
+    public Yamb getYamb(String username, YambType type, int numberOfColumns, int numberOfDice)
             throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Korisnik s imenom " + username + " nije pronađen."));
         if (user.getYamb() != null) {
             return yambRepository.findById(user.getYamb().getId()).get();
         } else {
-            Yamb yamb = new Yamb(user, type, numberOfColumns, numberOfDice);
-            return yambRepository.save(yamb);
+            return initializeYamb(user, type, numberOfColumns, numberOfDice);
         }
+    }
+
+    public Yamb initializeYamb(User user, YambType type, int numberOfColumns, int numberOfDice) {
+        Yamb yamb = new Yamb(user, type, numberOfColumns, numberOfDice);
+        return yambRepository.save(yamb);
     }
 
     /**
@@ -66,52 +71,42 @@ public class YambService {
      * 
      * @throws InvalidOwnershipException if form does not belong to user
      */
-    public void restartYambById(int id) throws InvalidOwnershipException {
+    public Yamb restartYambById(UUID id) throws InvalidOwnershipException {
         Yamb yamb = yambRepository.getById(id);
-        yamb.setAnnouncement(null);
-        yamb.setRollCount(0);
-        YambForm form = YambUtil.formStringToForm(yamb.getForm());
-        for (Column column : form.getColumns()) {
-            for (Box box : column.getBoxes()) {
-                box.setValue(0);
-                if (column.getType() == ColumnType.FREE || column.getType() == ColumnType.ANNOUNCEMENT)
-                    box.setAvailable(true);
-                else if (column.getType() == ColumnType.DOWNWARDS && box.getType() == BoxType.ONES)
-                    box.setAvailable(true);
-                else if (column.getType() == ColumnType.UPWARDS && box.getType() == BoxType.YAMB)
-                    box.setAvailable(true);
-                else
-                    box.setAvailable(false);
-                box.setFilled(false);
-            }
-        }
-        Set<Dice> diceSet = YambUtil.diceSetStringToDiceSet(yamb.getDiceSet());
+        return initializeYamb(yamb.getUser(), yamb.getType(), yamb.getNumberOfColumns(), yamb.getNumberOfDice());
+    }
 
-        for (Dice dice : diceSet) {
-            dice.setValue(6);
-        }
-        yamb.setDiceSet(YambUtil.diceSetToDiceSetString(diceSet));
-        yambRepository.save(yamb);
+    public Yamb recreateYambById(UUID id, YambType type, int numberOfColumns, int numberOfDice) throws InvalidOwnershipException {
+        Yamb yamb = yambRepository.getById(id);
+        return initializeYamb(yamb.getUser(), type, numberOfColumns, numberOfDice);
     }
 
     public void saveScore(User user, int totalSum) {
         scoreRepository.save(new Score(user, totalSum));
     }
 
-    public Yamb getYambById(int id) {
+    public Yamb getYambById(UUID id) {
         return yambRepository.findById(id).get();
     }
 
-    public List<Yamb> getYambList() {
+    public List<Yamb> getAllYambs() {
         return yambRepository.findAll();
+    }
+    
+    public void deleteYambById(UUID id) {
+        yambRepository.deleteById(id);
+    }
+
+    public void deleteAllYambs() {
+        yambRepository.deleteAll();
     }
 
     
-    public Set<Dice> rollDice(int yambId) throws IllegalMoveException {
+    public Set<Dice> rollDice(UUID yambId) throws IllegalMoveException {
         Yamb yamb = yambRepository.getById(yambId);
 
-        Set<Dice> diceSet = YambUtil.diceSetStringToDiceSet(yamb.getDiceSet());
-        YambForm form = YambUtil.formStringToForm(yamb.getForm());
+        Set<Dice> diceSet = yamb.getDiceSet();
+        YambForm form = yamb.getForm();
         if (yamb.getRollCount() == 0) {
             for (Dice dice : diceSet) {
                 dice.setHeld(false);
@@ -132,29 +127,29 @@ public class YambService {
                 dice.roll();
             }
         }
-        yamb.setDiceSet(YambUtil.diceSetToDiceSetString(diceSet));
+        yamb.setDiceSet(diceSet);
         yambRepository.save(yamb);
 
         return diceSet;
     }
 
-    public Set<Dice> holdDice(int yambId, int order) {
+    public Set<Dice> holdDice(UUID yambId, int order) {
         Yamb yamb = yambRepository.getById(yambId);
 
-        Set<Dice> diceSet = YambUtil.diceSetStringToDiceSet(yamb.getDiceSet());
+        Set<Dice> diceSet = yamb.getDiceSet();
         for (Dice dice : diceSet) {
             if (dice.getOrder() == order) {
                 dice.setHeld(!dice.isHeld());
                 break;
             }
         }
-        yamb.setDiceSet(YambUtil.diceSetToDiceSetString(diceSet));
+        yamb.setDiceSet(diceSet);
         yambRepository.save(yamb);
 
         return diceSet;
     }
 
-    public BoxType announce(int yambId, BoxType announcement) throws IllegalMoveException {
+    public BoxType announce(UUID yambId, BoxType announcement) throws IllegalMoveException {
         Yamb yamb = yambRepository.getById(yambId);
 
         if (yamb.getAnnouncement() != null) {
@@ -169,11 +164,11 @@ public class YambService {
         return yamb.getAnnouncement();
     }
 
-    public Yamb fill(int yambId, ColumnType columnType, BoxType boxType) throws IllegalMoveException {
+    public Yamb fill(UUID yambId, ColumnType columnType, BoxType boxType) throws IllegalMoveException {
         Yamb yamb = yambRepository.getById(yambId);
 
-        YambForm form = YambUtil.formStringToForm(yamb.getForm());
-        Set<Dice> diceSet = YambUtil.diceSetStringToDiceSet(yamb.getDiceSet());
+        YambForm form = yamb.getForm();
+        Set<Dice> diceSet = yamb.getDiceSet();
 
         Box selectedBox = form.getColumnByType(columnType).getBoxByType(boxType);
         
@@ -217,8 +212,8 @@ public class YambService {
             dice.setHeld(false);
         }
 
-        yamb.setDiceSet(YambUtil.diceSetToDiceSetString(diceSet));
-        yamb.setForm(YambUtil.formToFormString(form));
+        yamb.setDiceSet(diceSet);
+        yamb.setForm(form);
         yamb.setRollCount(0);
         yamb.setAnnouncement(null);
 

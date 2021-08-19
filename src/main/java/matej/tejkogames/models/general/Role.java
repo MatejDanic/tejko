@@ -13,7 +13,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 public class Role {
     
     @Id
-	private int id;
+    private int id;
 
 	@Column(nullable = false, unique = true)
 	private String label;
@@ -24,9 +24,10 @@ public class Role {
     public Role() {
     }
 
-    public Role(int id, String label) {
+    public Role(int id, String label, String description) {
         this.id = id;
         this.label = label;
+        this.description = description;
     }
 
     public int getId() {

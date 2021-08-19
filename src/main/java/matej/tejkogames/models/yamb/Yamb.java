@@ -1,17 +1,22 @@
 package matej.tejkogames.models.yamb;
 
+import java.util.Set;
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import matej.tejkogames.constants.YambConstants;
@@ -21,11 +26,17 @@ import matej.tejkogames.utils.YambUtil;
 @Entity
 @Table(name = "game_yamb")
 @RestResource(rel = "yambs", path = "yambs")
+@TypeDef(name="json_binary", typeClass = JsonBinaryType.class)
 public class Yamb {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+        name = "UUID",
+        strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
 
 	@OneToOne
     @JsonIgnore
@@ -41,36 +52,40 @@ public class Yamb {
     @Column
     private int numberOfDice;
     
-    @Lob
-    private String form;
+    @Type(type="json_binary")
+    @Column(columnDefinition = "jsonb")
+    private YambForm form;
 
     @Column
     private BoxType announcement;
-    
-    @Lob
-    private String diceSet;
+
+    @Type(type="json_binary")
+    @Column(columnDefinition = "jsonb")
+    private Set<Dice> diceSet;
     
     @Column
     private int rollCount;
 
     public Yamb(User user, YambType type, int numberOfColumns, int numberOfDice) {
-        if (type == YambType.CLASSIC) {
-            numberOfColumns = YambConstants.NUMBER_OF_COLUMNS;
-            numberOfDice = YambConstants.NUMBER_OF_DICE;
-        }
+        this.type = type;
         this.user = user;
-        this.form = YambUtil.generateYambForm(type, YambConstants.NUMBER_OF_COLUMNS, YambConstants.NUMBER_OF_DICE);
+        if (type == YambType.CLASSIC) {
+            this.numberOfColumns = YambConstants.NUMBER_OF_COLUMNS;
+            this.numberOfDice = YambConstants.NUMBER_OF_DICE;
+        }
+        this.form = YambUtil.generateYambForm(this.type, this.numberOfColumns, this.numberOfDice);
+        this.diceSet = YambUtil.generateDiceSet(this.numberOfDice);
         this.announcement = null;
         this.rollCount = 0;
     }
 
     public Yamb() {}
 
-    public int getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -106,11 +121,11 @@ public class Yamb {
         this.numberOfDice = numberOfDice;
     }
 
-    public String getForm() {
+    public YambForm getForm() {
         return form;
     }
 
-    public void setForm(String form) {
+    public void setForm(YambForm form) {
         this.form = form;
     }
 
@@ -122,11 +137,11 @@ public class Yamb {
         this.announcement = announcement;
     }
 
-    public String getDiceSet() {
+    public Set<Dice> getDiceSet() {
         return diceSet;
     }
 
-    public void setDiceSet(String diceSet) {
+    public void setDiceSet(Set<Dice> diceSet) {
         this.diceSet = diceSet;
     }
 

@@ -1,5 +1,7 @@
 package matej.tejkogames.api.controllers;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +49,7 @@ public class UserController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Object> getUserById(@PathVariable int id) {
+	public ResponseEntity<Object> getUserById(@PathVariable UUID id) {
 		try {
 			return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
 		} catch (Exception exception) {
@@ -56,18 +58,9 @@ public class UserController {
 		}
 	}
 
-	// @GetMapping("/{id}/form")
-	// public ResponseEntity<Object> getUserForm(@PathVariable int id) {
-	// 	try {
-	// 		return new ResponseEntity<>(userService.getUserById(id).getForm(), HttpStatus.OK);
-	// 	} catch (Exception exception) {
-	// 		return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
-	// 	}
-	// }
-
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Object> deleteUserById(@PathVariable int id) {
+	public ResponseEntity<Object> deleteUserById(@PathVariable UUID id) {
 		try {
 			userService.deleteUserById(id);
 			return new ResponseEntity<>(new MessageResponse("Korisnik uspješno izbrisan."), HttpStatus.OK);
@@ -79,7 +72,7 @@ public class UserController {
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping("/{id}/assign-role")
-	public ResponseEntity<Object> deleteUserById(@PathVariable int id, @RequestBody String roleLabel) {
+	public ResponseEntity<Object> deleteUserById(@PathVariable UUID id, @RequestBody String roleLabel) {
 		try {
 			return new ResponseEntity<>(userService.assignRole(id, roleLabel), HttpStatus.OK);
 		} catch (Exception exception) {
@@ -89,7 +82,7 @@ public class UserController {
 	}
 
 	@GetMapping("/{id}/preferences")
-	public ResponseEntity<Object> getUserPreferences(@PathVariable int id) {
+	public ResponseEntity<Object> getUserPreferences(@PathVariable UUID id) {
 		try {
 			return new ResponseEntity<>(userService.getUserPreference(id), HttpStatus.OK);
 		} catch (Exception exception) {
@@ -100,7 +93,7 @@ public class UserController {
 
 	@PatchMapping("/{id}/preferences")
 	public ResponseEntity<Object> updatePreference(@RequestHeader(value = "Authorization") String headerAuth,
-			@PathVariable(value = "id") int id, @RequestBody PreferenceRequest preferenceRequest) {
+			@PathVariable(value = "id") UUID id, @RequestBody PreferenceRequest preferenceRequest) {
 		try {
 			if (!userService.checkOwnership(jwtUtil.getUsernameFromHeader(headerAuth), id)) {
 				throw new InvalidOwnershipException("Korisnik nema ovlasti nad korisničkim računom s id-em " + id);

@@ -2,6 +2,7 @@ package matej.tejkogames.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +23,7 @@ public class YambUtil {
 
     private static ObjectMapper mapper = new ObjectMapper();
 
-    public static String generateYambForm(YambType type, int numberOfColumns, int numberOfDice) {
+    public static YambForm generateYambForm(YambType type, int numberOfColumns, int numberOfDice) {
 
         List<Column> columnList = new ArrayList<>();
         for (int i = 1; i <= numberOfColumns; i++) {
@@ -33,8 +34,16 @@ public class YambUtil {
         }
 
         YambForm form = new YambForm(columnList);
-        return formToFormString(form);
+        return form;
     }
+
+	public static Set<Dice> generateDiceSet(int numberOfDice) {
+		Set<Dice> diceSet = new HashSet<Dice>();
+		for (int i = 1; i <= numberOfDice; i++) {
+			diceSet.add(new Dice(i));
+        }
+		return diceSet;
+	}
 
     public static String formToFormString(YambForm form) {
         String formString = "";
@@ -101,16 +110,10 @@ public class YambUtil {
 		switch (boxType) { 
 			// determine method to be used for score calculation based on type of box to be
 			// filled
-			case ONES:
-			case TWOS:
-			case THREES:
-			case FOURS:
-			case FIVES:
-			case SIXES:
+			case ONES: case TWOS: case THREES: case FOURS: case FIVES: case SIXES:
 				result = calculateSumByType(diceValues, boxType);
 				break;
-			case MAX:
-			case MIN:
+			case MAX: case MIN:
 				result = calculateSum(diceValues);
 				break;
 			case TRIPS:

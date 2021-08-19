@@ -1,6 +1,7 @@
 package matej.tejkogames.models.general.payload.responses;
 
 import java.util.List;
+import java.util.UUID;
 
 public class JwtResponse {
 
@@ -8,13 +9,13 @@ public class JwtResponse {
 
     private String type = "Bearer";
 
-    private int id;
+    private UUID id;
 
     private String username;
     
     private List<String> roles;
 
-    public JwtResponse(String accessToken, int id, String username, List<String> roles) {
+    public JwtResponse(String accessToken, UUID id, String username, List<String> roles) {
         this.token = accessToken;
         this.id = id;
         this.username = username;
@@ -37,11 +38,11 @@ public class JwtResponse {
         this.type = tokenType;
     }
 
-    public int getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
