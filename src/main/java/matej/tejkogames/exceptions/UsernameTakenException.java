@@ -1,6 +1,6 @@
 package matej.tejkogames.exceptions;
 
-public class UsernameTakenException extends Exception {
+public class UsernameTakenException extends RuntimeException {
 
     /**
 	 * 

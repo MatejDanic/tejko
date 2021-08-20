@@ -11,12 +11,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import matej.tejkogames.models.general.enums.MessageType;
 import matej.tejkogames.models.general.payload.requests.LoginRequest;
 import matej.tejkogames.models.general.payload.requests.RegisterRequest;
-import matej.tejkogames.models.general.payload.responses.MessageResponse;
+import matej.tejkogames.models.general.payload.responses.JwtResponse;
 import matej.tejkogames.api.services.AuthService;
-import matej.tejkogames.api.services.ExceptionLogService;
+import matej.tejkogames.exceptions.UsernameTakenException;
 
 @RestController
 @CrossOrigin(origins = {"http://tejko.games", "http://www.tejko.games", "https://tejko-games.herokuapp.com" })
@@ -26,28 +25,14 @@ public class AuthController {
     @Autowired
     AuthService authService;
 
-    @Autowired
-    ExceptionLogService exceptionLogService;
-
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@Valid @RequestBody LoginRequest loginRequest) {
-        try {
-            return new ResponseEntity<>(authService.login(loginRequest), HttpStatus.OK);
-        } catch (Exception exception) {
-            // exceptionLogService.save(exception);
-            return new ResponseEntity<>(new MessageResponse("Login", MessageType.ERROR, exception.getMessage()), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+        return new ResponseEntity<>(authService.login(loginRequest), HttpStatus.OK);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@Valid @RequestBody RegisterRequest registerRequest) {
-        try {
-            authService.register(registerRequest);
-            return new ResponseEntity<>(new MessageResponse("Register", "Korisnik uspješno registriran"), HttpStatus.OK);
-        } catch (Exception exception) {
-            // exceptionLogService.save(exception);
-            return new ResponseEntity<>(new MessageResponse("Register", MessageType.ERROR, exception.getMessage()), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest registerRequest) throws UsernameTakenException {
+        return new ResponseEntity<>(authService.register(registerRequest), HttpStatus.OK);
     }
     
 }

@@ -13,16 +13,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import matej.tejkogames.api.repositories.RoleRepository;
+import matej.tejkogames.api.repositories.UserRepository;
+import matej.tejkogames.exceptions.UsernameTakenException;
 import matej.tejkogames.models.general.Role;
 import matej.tejkogames.models.general.User;
 import matej.tejkogames.models.general.UserDetailsImpl;
 import matej.tejkogames.models.general.payload.requests.LoginRequest;
 import matej.tejkogames.models.general.payload.requests.RegisterRequest;
 import matej.tejkogames.models.general.payload.responses.JwtResponse;
-import matej.tejkogames.api.repositories.RoleRepository;
-import matej.tejkogames.api.repositories.UserRepository;
-import matej.tejkogames.api.services.AuthService;
-import matej.tejkogames.exceptions.UsernameTakenException;
 import matej.tejkogames.utils.JwtUtil;
 
 @Service
@@ -56,7 +55,7 @@ public class AuthService {
         return new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), roles);
     }
 
-    public void register(RegisterRequest registerRequest) throws UsernameTakenException {
+    public String register(RegisterRequest registerRequest) throws UsernameTakenException {
         if (userRepo.existsByUsername(registerRequest.getUsername()))
             throw new UsernameTakenException("Korisničko ime je već zauzeto!");
 
@@ -78,6 +77,7 @@ public class AuthService {
         }
         user.setRoles(roles);
         userRepo.save(user);
+        return "User " + user.getUsername() + " successfully registered.";
     }
 
 }

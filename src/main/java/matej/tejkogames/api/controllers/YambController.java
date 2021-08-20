@@ -1,11 +1,12 @@
 package matej.tejkogames.api.controllers;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,15 +17,16 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import matej.tejkogames.api.services.UserService;
-import matej.tejkogames.api.services.YambService;
+import matej.tejkogames.api.services.UserServiceImpl;
+import matej.tejkogames.api.services.YambServiceImpl;
 import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.exceptions.IllegalMoveException;
 import matej.tejkogames.exceptions.InvalidOwnershipException;
 import matej.tejkogames.models.general.payload.requests.YambRequest;
-import matej.tejkogames.models.general.payload.responses.MessageResponse;
 import matej.tejkogames.models.yamb.BoxType;
 import matej.tejkogames.models.yamb.ColumnType;
+import matej.tejkogames.models.yamb.Dice;
+import matej.tejkogames.models.yamb.Yamb;
 import matej.tejkogames.utils.JwtUtil;
 
 @RestController
@@ -34,129 +36,82 @@ import matej.tejkogames.utils.JwtUtil;
 public class YambController {
 
 	@Autowired
-	YambService yambService;
+	YambServiceImpl yambService;
 
 	@Autowired
-	UserService userService;
+	UserServiceImpl userService;
 
 	@Autowired
 	JwtUtil jwtUtil;
 
 	@PutMapping("")
-	public ResponseEntity<Object> getYamb(@RequestHeader(value = "Authorization") String headerAuth,
+	public ResponseEntity<Yamb> getYamb(@RequestHeader(value = "Authorization") String headerAuth,
 			@RequestBody YambRequest yambRequest) {
-		try {
-			return new ResponseEntity<>(yambService.getYamb(jwtUtil.getUsernameFromHeader(headerAuth),
-					yambRequest.getType(), yambRequest.getNumberOfColumns(), yambRequest.getNumberOfDice()),
-					HttpStatus.OK);
-		} catch (UsernameNotFoundException exc) {
-			return new ResponseEntity<>(new MessageResponse(exc.getMessage()), HttpStatus.BAD_REQUEST);
-		}
+		return new ResponseEntity<>(yambService.getYamb(jwtUtil.getUsernameFromHeader(headerAuth),
+				yambRequest.getType(), yambRequest.getNumberOfColumns(), yambRequest.getNumberOfDice()), HttpStatus.OK);
+
 	}
 
 	@PutMapping("/{id}/roll")
-	public ResponseEntity<Object> rollDice(@RequestHeader(value = "Authorization") String headerAuth,
-			@PathVariable(value = "id") UUID id) {
-		try {
-			if (!userService.checkYambOwnership(jwtUtil.getUsernameFromHeader(headerAuth), id)) {
-				throw new InvalidOwnershipException("Yamb s id-em " + id + " ne pripada korisniku.");
-			}
-			return new ResponseEntity<>(yambService.rollDice(id), HttpStatus.OK);
-		} catch (InvalidOwnershipException | IllegalMoveException exc) {
-			return new ResponseEntity<>(new MessageResponse(exc.getMessage()), HttpStatus.BAD_REQUEST);
-		}
+	public ResponseEntity<Set<Dice>> rollDice(@RequestHeader(value = "Authorization") String headerAuth,
+			@PathVariable(value = "id") UUID id) throws IllegalMoveException, InvalidOwnershipException {
+		return new ResponseEntity<>(yambService.rollDice(jwtUtil.getUsernameFromHeader(headerAuth), id), HttpStatus.OK);
+
 	}
 
 	@PutMapping("/{id}/announce")
-	public ResponseEntity<Object> announce(@RequestHeader(value = "Authorization") String headerAuth,
-			@PathVariable(value = "id") UUID id, @RequestBody BoxType boxType) {
-		try {
-			if (!userService.checkYambOwnership(jwtUtil.getUsernameFromHeader(headerAuth), id)) {
-				throw new InvalidOwnershipException("Yamba s id-em " + id + " ne pripada korisniku.");
-			}
-			return new ResponseEntity<>(yambService.announce(id, boxType), HttpStatus.OK);
-		} catch (IllegalMoveException | InvalidOwnershipException exc) {
-			return new ResponseEntity<>(new MessageResponse(exc.getMessage()), HttpStatus.BAD_REQUEST);
-		}
+	public ResponseEntity<BoxType> announce(@RequestHeader(value = "Authorization") String headerAuth,
+			@PathVariable(value = "id") UUID id, @RequestBody BoxType boxType)
+			throws IllegalMoveException, InvalidOwnershipException {
+		return new ResponseEntity<>(yambService.announce(jwtUtil.getUsernameFromHeader(headerAuth), id, boxType),
+				HttpStatus.OK);
+
 	}
 
 	@PutMapping("/{id}/columns/{columnTypeId}/boxes/{boxTypeId}/fill")
-	public ResponseEntity<Object> fillBox(@RequestHeader(value = "Authorization") String headerAuth,
+	public ResponseEntity<Yamb> fillBox(@RequestHeader(value = "Authorization") String headerAuth,
 			@PathVariable(value = "id") UUID id, @PathVariable(value = "columnType") ColumnType columnType,
-			@PathVariable(value = "boxType") BoxType boxType) {
-		try {
-			if (!userService.checkYambOwnership(jwtUtil.getUsernameFromHeader(headerAuth), id)) {
-				throw new InvalidOwnershipException("Yamba s id-em " + id + " ne pripada korisniku.");
-			}
-			return new ResponseEntity<>(yambService.fill(id, columnType, boxType), HttpStatus.OK);
-		} catch (IllegalMoveException | InvalidOwnershipException exc) {
-			return new ResponseEntity<>(new MessageResponse(exc.getMessage()), HttpStatus.BAD_REQUEST);
-		}
+			@PathVariable(value = "boxType") BoxType boxType) throws IllegalMoveException, InvalidOwnershipException {
+		return new ResponseEntity<>(
+				yambService.fill(jwtUtil.getUsernameFromHeader(headerAuth), id, columnType, boxType), HttpStatus.OK);
+
 	}
 
 	@PutMapping("/{id}/restart")
-	public ResponseEntity<Object> restartYambById(@RequestHeader(value = "Authorization") String headerAuth,
-			@PathVariable(value = "id") UUID id) {
-		try {
-			if (!userService.checkYambOwnership(jwtUtil.getUsernameFromHeader(headerAuth), id)) {
-				throw new InvalidOwnershipException("Yamba s id-em " + id + " ne pripada korisniku.");
-			}
-			return new ResponseEntity<>(yambService.restartYambById(id), HttpStatus.OK);
-		} catch (InvalidOwnershipException exc) {
-			return new ResponseEntity<>(new MessageResponse(exc.getMessage()), HttpStatus.BAD_REQUEST);
-		}
+	public ResponseEntity<Yamb> restartYambById(@RequestHeader(value = "Authorization") String headerAuth,
+			@PathVariable(value = "id") UUID id) throws InvalidOwnershipException {
+		return new ResponseEntity<>(yambService.restartYambById(jwtUtil.getUsernameFromHeader(headerAuth), id),
+				HttpStatus.OK);
 	}
 
 	@PutMapping("/{id}/recreate")
-	public ResponseEntity<Object> recreateYambById(@RequestHeader(value = "Authorization") String headerAuth,
-			@PathVariable(value = "id") UUID id, @RequestBody YambRequest yambRequest) {
-		try {
-			if (!userService.checkYambOwnership(jwtUtil.getUsernameFromHeader(headerAuth), id)) {
-				throw new InvalidOwnershipException("Yamba s id-em " + id + " ne pripada korisniku.");
-			}
-			return new ResponseEntity<>(yambService.recreateYambById(id, yambRequest.getType(),
-					yambRequest.getNumberOfColumns(), yambRequest.getNumberOfDice()), HttpStatus.OK);
-		} catch (UsernameNotFoundException | InvalidOwnershipException exc) {
-			return new ResponseEntity<>(new MessageResponse(exc.getMessage()), HttpStatus.BAD_REQUEST);
-		}
+	public ResponseEntity<Yamb> recreateYambById(@RequestHeader(value = "Authorization") String headerAuth,
+			@PathVariable(value = "id") UUID id, @RequestBody YambRequest yambRequest)
+			throws InvalidOwnershipException {
+		return new ResponseEntity<>(yambService.recreateYambById(jwtUtil.getUsernameFromHeader(headerAuth), id,
+				yambRequest.getType(), yambRequest.getNumberOfColumns(), yambRequest.getNumberOfDice()), HttpStatus.OK);
 	}
 
 	@GetMapping("")
-	public ResponseEntity<Object> getAllYambs() {
-		try {
-			return new ResponseEntity<>(yambService.getAllYambs(), HttpStatus.OK);
-		} catch (Exception exc) {
-			return new ResponseEntity<>(new MessageResponse(exc.getMessage()), HttpStatus.BAD_REQUEST);
-		}
+	public ResponseEntity<List<Yamb>> getAll() {
+		return new ResponseEntity<>(yambService.getAll(), HttpStatus.OK);
 	}
 
 	@DeleteMapping("")
-	public ResponseEntity<Object> deleteAllYambs() {
-		try {
-			yambService.deleteAllYambs();
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception exc) {
-			return new ResponseEntity<>(new MessageResponse(exc.getMessage()), HttpStatus.BAD_REQUEST);
-		}
+	public ResponseEntity<String> deleteAll() {
+		yambService.deleteAll();
+		return new ResponseEntity<>("", HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Object> deleteYambById(@PathVariable(value = "id") UUID id) {
-		try {
-			yambService.deleteYambById(id);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception exc) {
-			return new ResponseEntity<>(new MessageResponse(exc.getMessage()), HttpStatus.BAD_REQUEST);
-		}
+	public ResponseEntity<String> deleteById(@PathVariable(value = "id") UUID id) {
+		yambService.deleteById(id);
+		return new ResponseEntity<>("", HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Object> getYambById(@PathVariable(value = "id") UUID id) {
-		try {
-			return new ResponseEntity<>(yambService.getYambById(id), HttpStatus.OK);
-		} catch (Exception exc) {
-			return new ResponseEntity<>(new MessageResponse(exc.getMessage()), HttpStatus.BAD_REQUEST);
-		}
+	public ResponseEntity<Yamb> getById(@PathVariable(value = "id") UUID id) {
+		return new ResponseEntity<>(yambService.getById(id), HttpStatus.OK);
 	}
 
 }

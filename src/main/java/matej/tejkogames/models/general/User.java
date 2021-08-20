@@ -51,7 +51,7 @@ public class User {
     @JsonIgnoreProperties("user")
     @OneToMany(mappedBy = "user", cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,
             CascadeType.REMOVE })
-    private List<ExceptionLog> exceptions;
+    private List<ApiError> apiErrors;
 
     @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,

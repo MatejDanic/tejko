@@ -11,48 +11,47 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.hibernate.annotations.GenericGenerator;
 
 import matej.tejkogames.constants.TejkoGamesConstants;
+import matej.tejkogames.utils.ApiErrorUtil;
 
 @Entity
 @Table
-public class ExceptionLog {
+public class ApiError {
 
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-        name = "UUID",
-        strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-	@Column(nullable = false)
-	private LocalDateTime time;
-    
-	@ManyToOne
-    @JsonIgnoreProperties({"exceptions", "yamb"})
-	@JoinColumn(name = "user_id")
-	private User user;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
+    private LocalDateTime timestamp;
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(nullable = false, length = TejkoGamesConstants.EXCEPTION_LOG_SIZE)
-	private String content;
-    
-	public ExceptionLog(String content) {
-		this.time = LocalDateTime.now();
-		this.content = content;
-	}
-    
-	public ExceptionLog(User user, String content) {
-        this.user = user;
-		this.time = LocalDateTime.now();
-		this.content = content;
-	}
+    private String content;
 
-    public ExceptionLog() { }
+    public ApiError(Throwable exception) {
+        this.timestamp = LocalDateTime.now();    
+        this.content = ApiErrorUtil.constructApiErrorContent(exception);
+    }
+
+    public ApiError(User user, Throwable exception) {
+        this.user = user;
+        this.timestamp = LocalDateTime.now();
+        this.content = ApiErrorUtil.constructApiErrorContent(exception);
+    }
+
+    public ApiError() { }
 
     public UUID getId() {
         return id;
@@ -62,12 +61,12 @@ public class ExceptionLog {
         this.id = id;
     }
 
-    public LocalDateTime getTime() {
-        return time;
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
 
-    public void setTime(LocalDateTime time) {
-        this.time = time;
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 
     public User getUser() {
@@ -86,6 +85,4 @@ public class ExceptionLog {
         this.content = content;
     }
 
-    
-    
 }

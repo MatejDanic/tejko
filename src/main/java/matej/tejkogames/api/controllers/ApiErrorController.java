@@ -9,27 +9,27 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import matej.tejkogames.api.services.ExceptionLogService;
+import matej.tejkogames.api.services.ApiErrorServiceImpl;
 import matej.tejkogames.models.general.enums.MessageType;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
 
 @RestController
 @CrossOrigin(origins = {"http://tejko.games", "http://www.tejko.games", "https://tejko-games.herokuapp.com" })
-@RequestMapping("/api/exceptions")
-public class ExceptionLogController {
+@RequestMapping("/api/errors")
+public class ApiErrorController {
 
     
     @Autowired
-    ExceptionLogService exceptionLogService;
+    ApiErrorServiceImpl apiErrorService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
-	@DeleteMapping("")
-	public ResponseEntity<Object> deleteAllExceptionLogs() {
+	@DeleteMapping("/")
+	public ResponseEntity<Object> deleteAll() {
 		try {
-			exceptionLogService.deleteAllExceptionLogs();
+			apiErrorService.deleteAll();
 			return new ResponseEntity<>(new MessageResponse("All Exception Logs have been deleted."), HttpStatus.OK);
 		} catch (Exception exception) {
-			exceptionLogService.save(exception);
+			apiErrorService.save(exception);
 			return new ResponseEntity<>(new MessageResponse("Exception Log Purge", MessageType.ERROR, exception.getMessage()), HttpStatus.BAD_REQUEST);
 		}
 	}

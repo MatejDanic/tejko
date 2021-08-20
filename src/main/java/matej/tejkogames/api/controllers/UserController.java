@@ -17,91 +17,57 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import matej.tejkogames.api.services.ExceptionLogService;
-import matej.tejkogames.api.services.UserService;
+import matej.tejkogames.api.services.UserServiceImpl;
 import matej.tejkogames.exceptions.InvalidOwnershipException;
 import matej.tejkogames.models.general.payload.requests.PreferenceRequest;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
 import matej.tejkogames.utils.JwtUtil;
 
 @RestController
-@CrossOrigin(origins = {"http://tejko.games", "http://www.tejko.games", "https://tejko-games.herokuapp.com" })
+@CrossOrigin(origins = { "http://tejko.games", "http://www.tejko.games", "https://tejko-games.herokuapp.com" })
 @RequestMapping("/api/users")
 public class UserController {
 
 	@Autowired
-	UserService userService;
+	UserServiceImpl userService;
 
-	@Autowired
-	ExceptionLogService exceptionLogService;
-	
 	@Autowired
 	JwtUtil jwtUtil;
 
 	@GetMapping("")
 	public ResponseEntity<Object> getUsers() {
-		try {
-			return new ResponseEntity<>(userService.getUsers(), HttpStatus.OK);
-		} catch (Exception exception) {
-			exceptionLogService.save(exception);
-			return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
-		}
+		return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Object> getUserById(@PathVariable UUID id) {
-		try {
-			return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
-		} catch (Exception exception) {
-			exceptionLogService.save(exception);
-			return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
-		}
+		return new ResponseEntity<>(userService.getById(id), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Object> deleteUserById(@PathVariable UUID id) {
-		try {
-			userService.deleteUserById(id);
-			return new ResponseEntity<>(new MessageResponse("Korisnik uspješno izbrisan."), HttpStatus.OK);
-		} catch (Exception exception) {
-			exceptionLogService.save(exception);
-			return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
-		}
+		userService.deleteById(id);
+		return new ResponseEntity<>(new MessageResponse("Korisnik uspješno izbrisan."), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping("/{id}/assign-role")
-	public ResponseEntity<Object> deleteUserById(@PathVariable UUID id, @RequestBody String roleLabel) {
-		try {
-			return new ResponseEntity<>(userService.assignRole(id, roleLabel), HttpStatus.OK);
-		} catch (Exception exception) {
-			exceptionLogService.save(exception);
-			return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
-		}
+	public ResponseEntity<Object> assignRoleById(@PathVariable UUID id, @RequestBody String roleLabel) {
+		return new ResponseEntity<>(userService.assignRoleById(id, roleLabel), HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}/preferences")
-	public ResponseEntity<Object> getUserPreferences(@PathVariable UUID id) {
-		try {
-			return new ResponseEntity<>(userService.getUserPreference(id), HttpStatus.OK);
-		} catch (Exception exception) {
-			exceptionLogService.save(exception);
-			return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
-		}
+	public ResponseEntity<Object> getUserPreferenceById(@PathVariable UUID id) {
+		return new ResponseEntity<>(userService.getUserPreferenceById(id), HttpStatus.OK);
 	}
 
 	@PatchMapping("/{id}/preferences")
-	public ResponseEntity<Object> updatePreference(@RequestHeader(value = "Authorization") String headerAuth,
-			@PathVariable(value = "id") UUID id, @RequestBody PreferenceRequest preferenceRequest) {
-		try {
-			if (!userService.checkOwnership(jwtUtil.getUsernameFromHeader(headerAuth), id)) {
-				throw new InvalidOwnershipException("Korisnik nema ovlasti nad korisničkim računom s id-em " + id);
-			}
-			return new ResponseEntity<>(userService.updateUserPreference(id, preferenceRequest), HttpStatus.OK);
-		} catch (InvalidOwnershipException exception) {
-			exceptionLogService.save(exception);
-			return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
-		}
+	public ResponseEntity<Object> updatePreferenceById(@RequestHeader(value = "Authorization") String headerAuth,
+			@PathVariable(value = "id") UUID id, @RequestBody PreferenceRequest preferenceRequest)
+			throws InvalidOwnershipException {
+		return new ResponseEntity<>(
+				userService.updateUserPreferenceById(jwtUtil.getUsernameFromHeader(headerAuth), id, preferenceRequest),
+				HttpStatus.OK);
 	}
 }

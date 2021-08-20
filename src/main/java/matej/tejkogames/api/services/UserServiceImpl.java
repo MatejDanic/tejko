@@ -5,12 +5,13 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import matej.tejkogames.api.repositories.PreferenceRepository;
 import matej.tejkogames.api.repositories.RoleRepository;
 import matej.tejkogames.api.repositories.UserRepository;
+import matej.tejkogames.exceptions.InvalidOwnershipException;
+import matej.tejkogames.interfaces.services.UserService;
 import matej.tejkogames.models.general.Preference;
 import matej.tejkogames.models.general.Role;
 import matej.tejkogames.models.general.User;
@@ -24,7 +25,7 @@ import matej.tejkogames.models.general.payload.requests.PreferenceRequest;
  * @since 2020-08-20
  */
 @Service
-public class UserService {
+public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
@@ -35,11 +36,16 @@ public class UserService {
     @Autowired
     PreferenceRepository prefRepository;
 
-    public Preference getUserPreference(UUID userId) {
+    public Preference getUserPreferenceById(UUID userId) {
         return userRepository.findById(userId).get().getPreference();
     }
 
-    public Preference updateUserPreference(UUID userId, PreferenceRequest prefRequest) {
+    public Preference updateUserPreferenceById(String username, UUID userId, PreferenceRequest prefRequest)
+            throws InvalidOwnershipException {
+
+        if (!checkOwnership(username, userId))
+            throw new InvalidOwnershipException("User s id-em " + userId + " ne pripada korisniku " + username + ".");
+
         User user = userRepository.findById(userId).get();
         Preference preference = user.getPreference();
         if (preference != null) {
@@ -61,37 +67,34 @@ public class UserService {
         return user.getPreference();
     }
 
-    public List<User> getUsers() {
+    public List<User> getAll() {
         return userRepository.findAll();
     }
 
-    public void deleteUserById(UUID id) {
+    public void deleteById(UUID id) {
         userRepository.deleteById(id);
     }
 
-    public User getUserById(UUID id) {
+    public void deleteAll() {
+        userRepository.deleteAll();
+    }
+
+    public User getById(UUID id) {
         return userRepository.findById(id).get();
     }
 
-    // public List<GameScore> getUserScores(int id) {
-    // return userRepo.findById(id).get().getScores();
+    // public boolean checkYambOwnership(String username, UUID yambId) {
+    // User user = userRepository.findByUsername(username)
+    // .orElseThrow(() -> new UsernameNotFoundException("Korisnik s imenom " +
+    // username + " nije pronađen."));
+    // return user.getYamb().getId() == yambId;
     // }
 
-    public boolean checkYambOwnership(String username, UUID yambId) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Korisnik s imenom " + username + " nije pronađen."));
-        return user.getYamb().getId() == yambId;
-    }
-
     public boolean checkOwnership(String username, UUID userId) {
-
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Korisnik s imenom " + username + " nije pronađen."));
-        return user.getId() == userId;
-
+        return getById(userId).getUsername().equals(username);
     }
 
-    public Set<Role> assignRole(UUID userId, String roleLabel) {
+    public Set<Role> assignRoleById(UUID userId, String roleLabel) {
 
         User user = userRepository.findById(userId).get();
         Set<Role> roles = user.getRoles();

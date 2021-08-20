@@ -2,21 +2,16 @@ package matej.tejkogames.utils;
 
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import matej.tejkogames.api.services.ExceptionLogService;
 import matej.tejkogames.models.general.UserDetailsImpl;
 
 @Component
 public class JwtUtil {
-
-	@Autowired
-	ExceptionLogService exceptionLogService;
 
 	@Value("${matej.tejkogames.jwtSecret}")
 	private String jwtSecret;
@@ -50,24 +45,14 @@ public class JwtUtil {
 	public String getUsernameFromJwtToken(String token) {
 		return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
 	}
-	
-	// public String getUsernameFromToken(String token) {
-	// 	String username = "";
-	// 	if (token != null && token != "" || validateJwtToken(token)) {
-	// 		username = getUsernameFromJwtToken(token);
-	// 	}
-    //     return username;
-    // }
 
 	public boolean validateJwtToken(String authToken) {
 		try {
 			Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
 			return true;
-		} catch (Exception exception) {
-			exceptionLogService.save(exception);
+		} catch (Exception exception) {	
+			return false;
 		} 
-		return false;
 	}
 
-	
 }

@@ -7,7 +7,7 @@ package matej.tejkogames.exceptions;
  * @version 1.0
  * @since 2020-08-20
  */
-public class InvalidOwnershipException extends Exception {
+public class InvalidOwnershipException extends RuntimeException {
 	
     /**
 	 * 
