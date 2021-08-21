@@ -95,22 +95,6 @@ public class YambServiceImpl implements YambService {
         scoreRepository.save(new Score(user, totalSum));
     }
 
-    public Yamb getById(UUID id) {
-        return yambRepository.findById(id).get();
-    }
-
-    public List<Yamb> getAll() {
-        return yambRepository.findAll();
-    }
-
-    public void deleteById(UUID id) {
-        yambRepository.deleteById(id);
-    }
-
-    public void deleteAll() {
-        yambRepository.deleteAll();
-    }
-
     public Set<Dice> rollDice(String username, UUID yambId) throws IllegalMoveException, InvalidOwnershipException {
 
         if (!checkYambOwnership(username, yambId))
@@ -243,6 +227,22 @@ public class YambServiceImpl implements YambService {
 
     private boolean checkYambOwnership(String username, UUID yambId) {
         return getById(yambId).getUser().getUsername().equals(username);
+    }
+    
+    public Yamb getById(UUID id) {
+        return yambRepository.findById(id).get();
+    }
+
+    public List<Yamb> getAll() {
+        return yambRepository.findAll();
+    }
+
+    public void deleteById(UUID id) {
+        yambRepository.deleteById(id);
+    }
+
+    public void deleteAll() {
+        yambRepository.deleteAll();
     }
 
 }

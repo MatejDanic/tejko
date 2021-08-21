@@ -22,7 +22,9 @@ import matej.tejkogames.api.services.YambServiceImpl;
 import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.exceptions.IllegalMoveException;
 import matej.tejkogames.exceptions.InvalidOwnershipException;
+import matej.tejkogames.interfaces.controllers.YambController;
 import matej.tejkogames.models.general.payload.requests.YambRequest;
+import matej.tejkogames.models.general.payload.responses.MessageResponse;
 import matej.tejkogames.models.yamb.BoxType;
 import matej.tejkogames.models.yamb.ColumnType;
 import matej.tejkogames.models.yamb.Dice;
@@ -33,7 +35,7 @@ import matej.tejkogames.utils.JwtUtil;
 @CrossOrigin(origins = { TejkoGamesConstants.ORIGIN_DEFAULT, TejkoGamesConstants.ORIGIN_WWW,
 		TejkoGamesConstants.ORIGIN_HEROKU })
 @RequestMapping("/api/yambs")
-public class YambController {
+public class YambControllerImpl implements YambController {
 
 	@Autowired
 	YambServiceImpl yambService;
@@ -92,26 +94,26 @@ public class YambController {
 				yambRequest.getType(), yambRequest.getNumberOfColumns(), yambRequest.getNumberOfDice()), HttpStatus.OK);
 	}
 
+	@GetMapping("/{id}")
+	public ResponseEntity<Yamb> getById(@PathVariable(value = "id") UUID id) {
+		return new ResponseEntity<>(yambService.getById(id), HttpStatus.OK);
+	}
+
 	@GetMapping("")
 	public ResponseEntity<List<Yamb>> getAll() {
 		return new ResponseEntity<>(yambService.getAll(), HttpStatus.OK);
 	}
 
-	@DeleteMapping("")
-	public ResponseEntity<String> deleteAll() {
-		yambService.deleteAll();
-		return new ResponseEntity<>("", HttpStatus.OK);
-	}
-
 	@DeleteMapping("/{id}")
-	public ResponseEntity<String> deleteById(@PathVariable(value = "id") UUID id) {
+	public ResponseEntity<MessageResponse> deleteById(@PathVariable(value = "id") UUID id) {
 		yambService.deleteById(id);
-		return new ResponseEntity<>("", HttpStatus.OK);
+		return new ResponseEntity<>(new MessageResponse("Yamb s id-em " + id + " uspješno izbrisan."), HttpStatus.OK);
 	}
 
-	@GetMapping("/{id}")
-	public ResponseEntity<Yamb> getById(@PathVariable(value = "id") UUID id) {
-		return new ResponseEntity<>(yambService.getById(id), HttpStatus.OK);
+	@DeleteMapping("")
+	public ResponseEntity<MessageResponse> deleteAll() {
+		yambService.deleteAll();
+		return new ResponseEntity<>(new MessageResponse("Svi Yambovi uspješno izbrisani."), HttpStatus.OK);
 	}
 
 }

@@ -29,10 +29,6 @@ public class ApiErrorServiceImpl implements ApiErrorService {
         return apiErrorRepository.save(new ApiError(user, exception));
     }
 
-    public void deleteAll() {
-        apiErrorRepository.deleteAll();
-    }
-
     public ApiError getById(UUID id) {
         return apiErrorRepository.getById(id);
     }
@@ -43,6 +39,10 @@ public class ApiErrorServiceImpl implements ApiErrorService {
 
     public void deleteById(UUID id) {
         apiErrorRepository.deleteById(id);
+    }
+    
+    public void deleteAll() {
+        apiErrorRepository.deleteAll();
     }
 
 }

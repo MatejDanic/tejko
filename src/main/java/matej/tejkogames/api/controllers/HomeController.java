@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import matej.tejkogames.constants.TejkoGamesConstants;
+
 @RestController
-@CrossOrigin(origins = {"http://tejko.games", "http://www.tejko.games", "https://tejko-games.herokuapp.com" })
-@RequestMapping("")
+@CrossOrigin(origins = { TejkoGamesConstants.ORIGIN_DEFAULT, TejkoGamesConstants.ORIGIN_WWW,
+	TejkoGamesConstants.ORIGIN_HEROKU })@RequestMapping("")
 public class HomeController {
 	
 	@GetMapping("/api")

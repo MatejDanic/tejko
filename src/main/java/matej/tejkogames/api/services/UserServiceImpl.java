@@ -67,29 +67,6 @@ public class UserServiceImpl implements UserService {
         return user.getPreference();
     }
 
-    public List<User> getAll() {
-        return userRepository.findAll();
-    }
-
-    public void deleteById(UUID id) {
-        userRepository.deleteById(id);
-    }
-
-    public void deleteAll() {
-        userRepository.deleteAll();
-    }
-
-    public User getById(UUID id) {
-        return userRepository.findById(id).get();
-    }
-
-    // public boolean checkYambOwnership(String username, UUID yambId) {
-    // User user = userRepository.findByUsername(username)
-    // .orElseThrow(() -> new UsernameNotFoundException("Korisnik s imenom " +
-    // username + " nije pronađen."));
-    // return user.getYamb().getId() == yambId;
-    // }
-
     public boolean checkOwnership(String username, UUID userId) {
         return getById(userId).getUsername().equals(username);
     }
@@ -106,6 +83,22 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         return user.getRoles();
-
     }
+
+    public User getById(UUID id) {
+        return userRepository.findById(id).get();
+    }
+
+    public List<User> getAll() {
+        return userRepository.findAll();
+    }
+
+    public void deleteById(UUID id) {
+        userRepository.deleteById(id);
+    }
+
+    public void deleteAll() {
+        userRepository.deleteAll();
+    }
+    
 }

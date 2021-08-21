@@ -15,11 +15,12 @@ import matej.tejkogames.models.general.payload.requests.LoginRequest;
 import matej.tejkogames.models.general.payload.requests.RegisterRequest;
 import matej.tejkogames.models.general.payload.responses.JwtResponse;
 import matej.tejkogames.api.services.AuthService;
+import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.exceptions.UsernameTakenException;
 
 @RestController
-@CrossOrigin(origins = {"http://tejko.games", "http://www.tejko.games", "https://tejko-games.herokuapp.com" })
-@RequestMapping("/api/auth")
+@CrossOrigin(origins = { TejkoGamesConstants.ORIGIN_DEFAULT, TejkoGamesConstants.ORIGIN_WWW,
+    TejkoGamesConstants.ORIGIN_HEROKU })@RequestMapping("/api/auth")
 public class AuthController {
 
     @Autowired

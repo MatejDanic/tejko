@@ -1,5 +1,6 @@
 package matej.tejkogames.api.controllers;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +19,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import matej.tejkogames.api.services.UserServiceImpl;
+import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.exceptions.InvalidOwnershipException;
+import matej.tejkogames.interfaces.controllers.UserController;
+import matej.tejkogames.models.general.User;
 import matej.tejkogames.models.general.payload.requests.PreferenceRequest;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
 import matej.tejkogames.utils.JwtUtil;
 
 @RestController
-@CrossOrigin(origins = { "http://tejko.games", "http://www.tejko.games", "https://tejko-games.herokuapp.com" })
+@CrossOrigin(origins = { TejkoGamesConstants.ORIGIN_DEFAULT, TejkoGamesConstants.ORIGIN_WWW,
+		TejkoGamesConstants.ORIGIN_HEROKU })
 @RequestMapping("/api/users")
-public class UserController {
+public class UserControllerImpl implements UserController {
 
 	@Autowired
 	UserServiceImpl userService;
@@ -34,21 +39,28 @@ public class UserController {
 	@Autowired
 	JwtUtil jwtUtil;
 
-	@GetMapping("")
-	public ResponseEntity<Object> getUsers() {
-		return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
+	@GetMapping("/{id}")
+	public ResponseEntity<User> getById(@PathVariable UUID id) {
+		return new ResponseEntity<>(userService.getById(id), HttpStatus.OK);
 	}
 
-	@GetMapping("/{id}")
-	public ResponseEntity<Object> getUserById(@PathVariable UUID id) {
-		return new ResponseEntity<>(userService.getById(id), HttpStatus.OK);
+	@GetMapping("")
+	public ResponseEntity<List<User>> getAll() {
+		return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Object> deleteUserById(@PathVariable UUID id) {
+	public ResponseEntity<MessageResponse> deleteById(@PathVariable UUID id) {
 		userService.deleteById(id);
 		return new ResponseEntity<>(new MessageResponse("Korisnik uspješno izbrisan."), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@DeleteMapping("/")
+	public ResponseEntity<MessageResponse> deleteAll() {
+		userService.deleteAll();
+		return new ResponseEntity<>(new MessageResponse("Svi korisnici uspješno izbrisani."), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
