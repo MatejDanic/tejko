@@ -3,7 +3,7 @@ package matej.tejkogames.configurations;
 import java.security.Principal;
 
 public class StompPrincipal implements Principal {
-    
+
     String name;
 
     StompPrincipal(String name) {

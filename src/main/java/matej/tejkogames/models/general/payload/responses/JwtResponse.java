@@ -12,7 +12,7 @@ public class JwtResponse {
     private UUID id;
 
     private String username;
-    
+
     private List<String> roles;
 
     public JwtResponse(String accessToken, UUID id, String username, List<String> roles) {

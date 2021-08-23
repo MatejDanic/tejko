@@ -7,9 +7,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Column {
 
     private ColumnType type;
+
     private List<Box> boxes;
+
     private int sumOne;
+
     private int sumTwo;
+
     private int sumThree;
 
     public Column(ColumnType type, List<Box> boxes) {
@@ -27,7 +31,7 @@ public class Column {
     public void setType(ColumnType type) {
         this.type = type;
     }
-    
+
     public List<Box> getBoxes() {
         return this.boxes;
     }
@@ -35,7 +39,7 @@ public class Column {
     public void setBoxes(List<Box> boxes) {
         this.boxes = boxes;
     }
-    
+
     public int getSumOne() {
         return this.sumOne;
     }
@@ -43,7 +47,7 @@ public class Column {
     public void setSumOne(int sumOne) {
         this.sumOne = sumOne;
     }
-    
+
     public int getSumTwo() {
         return this.sumTwo;
     }
@@ -61,13 +65,13 @@ public class Column {
     }
 
     public Box getBoxByType(BoxType boxType) {
-		for (Box box : this.boxes) {
-			if (box.getType() == boxType) {
-				return box;
-			}
-		}
-		return null;
-	}
+        for (Box box : this.boxes) {
+            if (box.getType() == boxType) {
+                return box;
+            }
+        }
+        return null;
+    }
 
     @JsonIgnore
     public boolean isFinished() {
@@ -84,13 +88,13 @@ public class Column {
         this.sumTwo = 0;
         this.sumThree = 0;
         for (Box box : this.boxes) {
-            if (box.getType() == BoxType.ONES || box.getType() == BoxType.TWOS || 
-                box.getType() == BoxType.THREES || box.getType() == BoxType.FOURS || 
-                box.getType() == BoxType.FIVES || box.getType() == BoxType.SIXES) {
+            if (box.getType() == BoxType.ONES || box.getType() == BoxType.TWOS || box.getType() == BoxType.THREES
+                    || box.getType() == BoxType.FOURS || box.getType() == BoxType.FIVES
+                    || box.getType() == BoxType.SIXES) {
                 sumOne += box.getValue();
-            } else if (box.getType() == BoxType.TRIPS || box.getType() == BoxType.STRAIGHT || 
-                        box.getType() == BoxType.BOAT || box.getType() == BoxType.CARRIAGE || 
-                        box.getType() == BoxType.YAMB) {
+            } else if (box.getType() == BoxType.TRIPS || box.getType() == BoxType.STRAIGHT
+                    || box.getType() == BoxType.BOAT || box.getType() == BoxType.CARRIAGE
+                    || box.getType() == BoxType.YAMB) {
                 sumThree += box.getValue();
             }
         }
@@ -101,5 +105,5 @@ public class Column {
             this.sumTwo = ones.getValue() * (max.getValue() - min.getValue());
         }
     }
-    
+
 }

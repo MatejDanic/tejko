@@ -17,7 +17,7 @@ public class YambForm {
     private int sumThree;
 
     private int totalSum;
-    
+
     private int availableBoxes;
 
     public YambForm(List<Column> columns) {
@@ -29,7 +29,8 @@ public class YambForm {
         this.availableBoxes = this.columns.size() * YambConstants.NUMBER_OF_BOXES;
     }
 
-    public YambForm() { }
+    public YambForm() {
+    }
 
     public List<Column> getColumns() {
         return this.columns;
@@ -38,7 +39,7 @@ public class YambForm {
     public void setColumns(List<Column> columns) {
         this.columns = columns;
     }
-    
+
     public int getSumOne() {
         return this.sumOne;
     }
@@ -46,7 +47,7 @@ public class YambForm {
     public void setSumOne(int sumOne) {
         this.sumOne = sumOne;
     }
-    
+
     public int getSumTwo() {
         return this.sumTwo;
     }
@@ -117,12 +118,12 @@ public class YambForm {
     }
 
     public Column getColumnByType(ColumnType type) {
-		for (Column column : this.columns) {
-			if (column.getType() == type) {
-				return column;
-			}
-		}
-		return null;
-	}
-    
+        for (Column column : this.columns) {
+            if (column.getType() == type) {
+                return column;
+            }
+        }
+        return null;
+    }
+
 }

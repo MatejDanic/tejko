@@ -27,7 +27,6 @@ import org.springframework.data.rest.core.annotation.RestResource;
 
 import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.models.yamb.Yamb;
-import matej.tejkogames.models.yamb.Score;
 
 @Entity
 @Table(name = "auth_user")
@@ -44,18 +43,15 @@ public class User {
     private UUID id;
 
     @JsonIgnoreProperties("user")
-    @OneToMany(mappedBy = "user", cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,
-            CascadeType.REMOVE })
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Score> scores;
 
     @JsonIgnoreProperties("user")
-    @OneToMany(mappedBy = "user", cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,
-            CascadeType.REMOVE })
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<ApiError> apiErrors;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "user", cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,
-            CascadeType.REMOVE })
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Yamb yamb;
 
     @Column(nullable = false, unique = true)
@@ -71,12 +67,10 @@ public class User {
     private Set<Role> roles;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "user", cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,
-            CascadeType.REMOVE }, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Preference preference;
 
-    public User() {
-    }
+    public User() {}
 
     public User(String username, String password) {
         this.username = username;

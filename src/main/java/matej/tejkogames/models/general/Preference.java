@@ -41,6 +41,13 @@ public class Preference {
 
     @Column()
     private Theme theme;
+
+    public Preference(int volume, Theme theme) {
+        this.volume = volume;
+        this.theme = theme;
+    }
+
+    public Preference() {}
     
     public User getUser() {
         return user;
@@ -57,4 +64,5 @@ public class Preference {
     public void setVolume(int volume) {
         this.volume = volume;
     }
+
 }

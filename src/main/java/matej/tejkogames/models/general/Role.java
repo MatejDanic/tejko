@@ -21,8 +21,7 @@ public class Role {
 	@Column
     private String description;
 
-    public Role() {
-    }
+    public Role() {}
 
     public Role(int id, String label, String description) {
         this.id = id;

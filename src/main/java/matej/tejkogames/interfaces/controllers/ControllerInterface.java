@@ -14,7 +14,7 @@ public interface ControllerInterface<T> {
     public ResponseEntity<List<T>> getAll();
 
     public ResponseEntity<MessageResponse> deleteById(UUID id);
-    
+
     public ResponseEntity<MessageResponse> deleteAll();
-    
+
 }

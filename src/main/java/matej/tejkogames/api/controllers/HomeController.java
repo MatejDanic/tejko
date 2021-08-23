@@ -13,10 +13,11 @@ import matej.tejkogames.constants.TejkoGamesConstants;
 
 @RestController
 @CrossOrigin(origins = { TejkoGamesConstants.ORIGIN_DEFAULT, TejkoGamesConstants.ORIGIN_WWW,
-	TejkoGamesConstants.ORIGIN_HEROKU })@RequestMapping("")
+		TejkoGamesConstants.ORIGIN_HEROKU })
+@RequestMapping("/api")
 public class HomeController {
-	
-	@GetMapping("/api")
+
+	@GetMapping("")
 	public void home(HttpServletResponse response) throws IOException {
 		response.sendRedirect("/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config");
 	}

@@ -20,7 +20,8 @@ import matej.tejkogames.exceptions.UsernameTakenException;
 
 @RestController
 @CrossOrigin(origins = { TejkoGamesConstants.ORIGIN_DEFAULT, TejkoGamesConstants.ORIGIN_WWW,
-    TejkoGamesConstants.ORIGIN_HEROKU })@RequestMapping("/api/auth")
+        TejkoGamesConstants.ORIGIN_HEROKU })
+@RequestMapping("/api/auth")
 public class AuthController {
 
     @Autowired
@@ -32,8 +33,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest registerRequest) throws UsernameTakenException {
+    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest registerRequest)
+            throws UsernameTakenException {
         return new ResponseEntity<>(authService.register(registerRequest), HttpStatus.OK);
     }
-    
+
 }

@@ -20,12 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import matej.tejkogames.api.services.UserServiceImpl;
 import matej.tejkogames.constants.TejkoGamesConstants;
-import matej.tejkogames.exceptions.InvalidOwnershipException;
 import matej.tejkogames.interfaces.controllers.UserController;
 import matej.tejkogames.models.general.User;
 import matej.tejkogames.models.general.payload.requests.PreferenceRequest;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
-import matej.tejkogames.utils.JwtUtil;
+import matej.tejkogames.models.yamb.Yamb;
 
 @RestController
 @CrossOrigin(origins = { TejkoGamesConstants.ORIGIN_DEFAULT, TejkoGamesConstants.ORIGIN_WWW,
@@ -35,9 +34,6 @@ public class UserControllerImpl implements UserController {
 
 	@Autowired
 	UserServiceImpl userService;
-
-	@Autowired
-	JwtUtil jwtUtil;
 
 	@GetMapping("/{id}")
 	public ResponseEntity<User> getById(@PathVariable UUID id) {
@@ -49,7 +45,7 @@ public class UserControllerImpl implements UserController {
 		return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<MessageResponse> deleteById(@PathVariable UUID id) {
 		userService.deleteById(id);
@@ -57,29 +53,43 @@ public class UserControllerImpl implements UserController {
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
-	@DeleteMapping("/")
+	@DeleteMapping("")
 	public ResponseEntity<MessageResponse> deleteAll() {
 		userService.deleteAll();
 		return new ResponseEntity<>(new MessageResponse("Svi korisnici uspješno izbrisani."), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
+	@PutMapping("/{id}/yamb")
+	public ResponseEntity<Yamb> getYambByUserId(@RequestHeader(value = "Authorization") String headerAuth,
+			@PathVariable UUID id) {
+		return new ResponseEntity<>(userService.getYambByUserId(id), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
 	@PutMapping("/{id}/assign-role")
-	public ResponseEntity<Object> assignRoleById(@PathVariable UUID id, @RequestBody String roleLabel) {
-		return new ResponseEntity<>(userService.assignRoleById(id, roleLabel), HttpStatus.OK);
+	public ResponseEntity<Object> assignRoleByUserId(@PathVariable UUID id, @RequestBody String roleLabel) {
+		return new ResponseEntity<>(userService.assignRoleByUserId(id, roleLabel), HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
 	@GetMapping("/{id}/preferences")
-	public ResponseEntity<Object> getUserPreferenceById(@PathVariable UUID id) {
-		return new ResponseEntity<>(userService.getUserPreferenceById(id), HttpStatus.OK);
+	public ResponseEntity<Object> getPreferenceByUserId(@RequestHeader(value = "Authorization") String headerAuth,
+			@PathVariable UUID id) {
+		return new ResponseEntity<>(userService.getPreferenceByUserId(id), HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
 	@PatchMapping("/{id}/preferences")
-	public ResponseEntity<Object> updatePreferenceById(@RequestHeader(value = "Authorization") String headerAuth,
-			@PathVariable(value = "id") UUID id, @RequestBody PreferenceRequest preferenceRequest)
-			throws InvalidOwnershipException {
-		return new ResponseEntity<>(
-				userService.updateUserPreferenceById(jwtUtil.getUsernameFromHeader(headerAuth), id, preferenceRequest),
-				HttpStatus.OK);
+	public ResponseEntity<Object> savePreferenceByUserId(@RequestHeader(value = "Authorization") String headerAuth,
+			@PathVariable(value = "id") UUID id, @RequestBody PreferenceRequest preferenceRequest) {
+		return new ResponseEntity<>(userService.savePreferenceByUserId(id, preferenceRequest), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
+	@GetMapping("/{id}/scores")
+	public ResponseEntity<Object> getScoresByUserId(@RequestHeader(value = "Authorization") String headerAuth,
+			@PathVariable UUID id) {
+		return new ResponseEntity<>(userService.getScoresByUserId(id), HttpStatus.OK);
 	}
 }

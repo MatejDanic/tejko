@@ -1,4 +1,4 @@
-package matej.tejkogames.models.yamb;
+package matej.tejkogames.models.general;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -11,12 +11,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
 
-import matej.tejkogames.models.general.User;
+import matej.tejkogames.models.general.enums.TejkoGame;
 
 @Entity
 @Table(name="game_score")
@@ -33,22 +33,27 @@ public class Score {
     private UUID id;
 
 	@ManyToOne
-    @JsonIgnoreProperties({"scores", "yamb"})
+    // @JsonIgnoreProperties({"scores", "yamb"})
+	@JsonIncludeProperties({"username"})
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
+
+	@Column(nullable = false)
+	private TejkoGame game;
 	
 	@Column(nullable = false)
 	private int value;
 	
 	@Column(nullable = false)
 	private LocalDateTime date;
+	
+	public Score() {}
 
-	public Score (User user, int value) {
-		this.user = user;
+	public Score (TejkoGame game, int value) {
 		this.value = value;
 		this.date = LocalDateTime.now();
 	}
-	
+
 	public User getUser() {
 		return user;
 	}

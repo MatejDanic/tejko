@@ -40,18 +40,19 @@ public class ApiError {
     @Column(nullable = false, length = TejkoGamesConstants.EXCEPTION_LOG_SIZE)
     private String content;
 
+    public ApiError() {}
+
     public ApiError(Throwable exception) {
         this.timestamp = LocalDateTime.now();    
-        this.content = ApiErrorUtil.constructApiErrorContent(exception);
+        this.content = ApiErrorUtil.constructApiErrorContent(exception, TejkoGamesConstants.RECURSION_LIMIT);
     }
 
     public ApiError(User user, Throwable exception) {
         this.user = user;
         this.timestamp = LocalDateTime.now();
-        this.content = ApiErrorUtil.constructApiErrorContent(exception);
+        this.content = ApiErrorUtil.constructApiErrorContent(exception, TejkoGamesConstants.RECURSION_LIMIT);
     }
 
-    public ApiError() { }
 
     public UUID getId() {
         return id;

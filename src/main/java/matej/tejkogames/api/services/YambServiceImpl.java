@@ -5,24 +5,23 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import matej.tejkogames.api.repositories.UserRepository;
 import matej.tejkogames.api.repositories.YambRepository;
 import matej.tejkogames.api.repositories.ScoreRepository;
 import matej.tejkogames.exceptions.IllegalMoveException;
-import matej.tejkogames.exceptions.InvalidOwnershipException;
 import matej.tejkogames.interfaces.services.YambService;
 import matej.tejkogames.models.yamb.YambType;
 import matej.tejkogames.utils.YambUtil;
-import matej.tejkogames.models.general.User;
+import matej.tejkogames.models.general.Score;
+import matej.tejkogames.models.general.enums.TejkoGame;
+import matej.tejkogames.models.general.payload.requests.YambRequest;
 import matej.tejkogames.models.yamb.Box;
 import matej.tejkogames.models.yamb.BoxType;
 import matej.tejkogames.models.yamb.Column;
 import matej.tejkogames.models.yamb.ColumnType;
 import matej.tejkogames.models.yamb.Dice;
-import matej.tejkogames.models.yamb.Score;
 import matej.tejkogames.models.yamb.Yamb;
 import matej.tejkogames.models.yamb.YambForm;
 
@@ -38,29 +37,23 @@ public class YambServiceImpl implements YambService {
     @Autowired
     ScoreRepository scoreRepository;
 
-    /**
-     * Creates or retrieves existing {@link Yamb} Object for the current
-     * {@link User}.
-     * 
-     * @param username the username of the current user
-     * 
-     * @return {@link Yamb} the form that the game will be played on
-     * 
-     * @throws UsernameNotFoundException if user with given username does not exist
-     */
-    public Yamb getYamb(String username, YambType type, int numberOfColumns, int numberOfDice)
-            throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Korisnik s imenom " + username + " nije pronađen."));
-        if (user.getYamb() != null) {
-            return yambRepository.findById(user.getYamb().getId()).get();
-        } else {
-            return initializeYamb(user, type, numberOfColumns, numberOfDice);
-        }
+    public Yamb getById(UUID id) {
+        return yambRepository.findById(id).get();
     }
 
-    private Yamb initializeYamb(User user, YambType type, int numberOfColumns, int numberOfDice) {
-        Yamb yamb = new Yamb(user, type, numberOfColumns, numberOfDice);
+    public List<Yamb> getAll() {
+        return yambRepository.findAll();
+    }
+
+    public void deleteById(UUID id) {
+        yambRepository.deleteById(id);
+    }
+
+    public void deleteAll() {
+        yambRepository.deleteAll();
+    }
+
+    public Yamb saveById(Yamb yamb) {
         return yambRepository.save(yamb);
     }
 
@@ -72,35 +65,24 @@ public class YambServiceImpl implements YambService {
      * 
      * @throws InvalidOwnershipException if form does not belong to user
      */
-    public Yamb restartYambById(String username, UUID yambId) throws InvalidOwnershipException {
-
-        if (!checkYambOwnership(username, yambId))
-            throw new InvalidOwnershipException("Yamb s id-em " + yambId + " ne pripada korisniku " + username + ".");
-
-        Yamb yamb = yambRepository.getById(yambId);
-        return initializeYamb(yamb.getUser(), yamb.getType(), yamb.getNumberOfColumns(), yamb.getNumberOfDice());
+    public Yamb restartById(UUID id) {
+        Yamb yamb = getById(id);
+        return initializeYambById(id, yamb.getType(), yamb.getNumberOfColumns(), yamb.getNumberOfDice());
     }
 
-    public Yamb recreateYambById(String username, UUID yambId, YambType type, int numberOfColumns, int numberOfDice)
-            throws InvalidOwnershipException {
-
-        if (!checkYambOwnership(username, yambId))
-            throw new InvalidOwnershipException("Yamb s id-em " + yambId + " ne pripada korisniku " + username + ".");
-
-        Yamb yamb = yambRepository.getById(yambId);
-        return initializeYamb(yamb.getUser(), type, numberOfColumns, numberOfDice);
+    public Yamb recreateById(UUID id, YambRequest yambRequest) {
+        return initializeYambById(id, yambRequest.getType(), yambRequest.getNumberOfColumns(),
+                yambRequest.getNumberOfDice());
     }
 
-    public void saveScore(User user, int totalSum) {
-        scoreRepository.save(new Score(user, totalSum));
+    private Yamb initializeYambById(UUID id, YambType type, int numberOfColumns, int numberOfDice) {
+        Yamb yamb = YambUtil.generateYamb(type, numberOfColumns, numberOfDice);
+        yamb.setId(id);
+        return yambRepository.save(yamb);
     }
 
-    public Set<Dice> rollDice(String username, UUID yambId) throws IllegalMoveException, InvalidOwnershipException {
-
-        if (!checkYambOwnership(username, yambId))
-            throw new InvalidOwnershipException("Yamb s id-em " + yambId + " ne pripada korisniku " + username + ".");
-
-        Yamb yamb = yambRepository.getById(yambId);
+    public Set<Dice> rollDiceById(UUID id) throws IllegalMoveException {
+        Yamb yamb = getById(id);
         Set<Dice> diceSet = yamb.getDiceSet();
         YambForm form = yamb.getForm();
         if (yamb.getRollCount() == 0) {
@@ -112,8 +94,9 @@ public class YambServiceImpl implements YambService {
         } else if (yamb.getRollCount() == 1 && yamb.getAnnouncement() == null && form.isAnnouncementRequired()) {
             throw new IllegalMoveException("Announcement is required!");
         }
-        if (yamb.getRollCount() < 3) yamb.setRollCount(yamb.getRollCount() + 1);
-        
+        if (yamb.getRollCount() < 3)
+            yamb.setRollCount(yamb.getRollCount() + 1);
+
         for (Dice dice : diceSet) {
             if (!dice.isHeld()) {
                 dice.roll();
@@ -125,12 +108,8 @@ public class YambServiceImpl implements YambService {
         return diceSet;
     }
 
-    public Set<Dice> holdDice(String username, UUID yambId, int order) throws InvalidOwnershipException {
-
-        if (!checkYambOwnership(username, yambId))
-            throw new InvalidOwnershipException("Yamb s id-em " + yambId + " ne pripada korisniku " + username + ".");
-
-        Yamb yamb = yambRepository.getById(yambId);
+    public Set<Dice> holdDiceById(UUID id, int order) {
+        Yamb yamb = getById(id);
         Set<Dice> diceSet = yamb.getDiceSet();
         for (Dice dice : diceSet) {
             if (dice.getOrder() == order) {
@@ -144,13 +123,9 @@ public class YambServiceImpl implements YambService {
         return diceSet;
     }
 
-    public BoxType announce(String username, UUID yambId, BoxType announcement)
-            throws IllegalMoveException, InvalidOwnershipException {
+    public BoxType announceById(UUID id, BoxType announcement) throws IllegalMoveException {
 
-        if (!checkYambOwnership(username, yambId))
-            throw new InvalidOwnershipException("Yamb s id-em " + yambId + " ne pripada korisniku " + username + ".");
-
-        Yamb yamb = yambRepository.getById(yambId);
+        Yamb yamb = getById(id);
 
         if (yamb.getAnnouncement() != null) {
             throw new IllegalMoveException("Announcement already declared!");
@@ -164,14 +139,9 @@ public class YambServiceImpl implements YambService {
         return yamb.getAnnouncement();
     }
 
-    public Yamb fill(String username, UUID yambId, ColumnType columnType, BoxType boxType)
-            throws IllegalMoveException, InvalidOwnershipException {
+    public Yamb fillById(UUID id, ColumnType columnType, BoxType boxType) throws IllegalMoveException {
 
-        if (!checkYambOwnership(username, yambId))
-            throw new InvalidOwnershipException("Yamb s id-em " + yambId + " ne pripada korisniku " + username + ".");
-
-        Yamb yamb = yambRepository.getById(yambId);
-
+        Yamb yamb = getById(id);
         YambForm form = yamb.getForm();
         Set<Dice> diceSet = yamb.getDiceSet();
 
@@ -208,7 +178,9 @@ public class YambServiceImpl implements YambService {
         form.setAvailableBoxes(form.getAvailableBoxes() - 1);
 
         if (form.getAvailableBoxes() == 0) {
-            saveScore(yamb.getUser(), form.getTotalSum());
+            Score score = new Score(TejkoGame.YAMB, form.getTotalSum());
+            score.setUser(yamb.getUser());
+            scoreRepository.save(score);
         }
 
         for (Dice dice : diceSet) {
@@ -223,26 +195,6 @@ public class YambServiceImpl implements YambService {
         yambRepository.save(yamb);
 
         return yamb;
-    }
-
-    private boolean checkYambOwnership(String username, UUID yambId) {
-        return getById(yambId).getUser().getUsername().equals(username);
-    }
-    
-    public Yamb getById(UUID id) {
-        return yambRepository.findById(id).get();
-    }
-
-    public List<Yamb> getAll() {
-        return yambRepository.findAll();
-    }
-
-    public void deleteById(UUID id) {
-        yambRepository.deleteById(id);
-    }
-
-    public void deleteAll() {
-        yambRepository.deleteAll();
     }
 
 }

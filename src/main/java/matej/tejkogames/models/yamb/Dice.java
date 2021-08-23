@@ -4,18 +4,21 @@ import java.io.Serializable;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Dice implements Serializable {
-    
+
     private int value;
+
     private int order;
+
     private boolean held;
+
+    public Dice() {
+    }
 
     public Dice(int order) {
         this.order = order;
-        this.value = 6; 
+        this.value = 6;
         this.held = false;
     }
-
-    public Dice() { }
 
     public int getValue() {
         return this.value;
@@ -39,10 +42,10 @@ public class Dice implements Serializable {
 
     public void setHeld(boolean held) {
         this.held = held;
-    }    
+    }
 
-	public void roll() {
-		this.value = ThreadLocalRandom.current().nextInt(1, 7);
-	}
+    public void roll() {
+        this.value = ThreadLocalRandom.current().nextInt(1, 7);
+    }
 
 }

@@ -11,48 +11,54 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import matej.tejkogames.api.services.ApiErrorServiceImpl;
+import matej.tejkogames.api.services.ScoreServiceImpl;
 import matej.tejkogames.constants.TejkoGamesConstants;
-import matej.tejkogames.interfaces.controllers.ApiErrorController;
-import matej.tejkogames.models.general.ApiError;
+import matej.tejkogames.interfaces.controllers.ScoreController;
+import matej.tejkogames.models.general.Score;
+import matej.tejkogames.models.general.payload.requests.DateIntervalRequest;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
 
 @RestController
 @CrossOrigin(origins = { TejkoGamesConstants.ORIGIN_DEFAULT, TejkoGamesConstants.ORIGIN_WWW,
 		TejkoGamesConstants.ORIGIN_HEROKU })
-@RequestMapping("/api/errors")
-public class ApiErrorControllerImpl implements ApiErrorController {
+@RequestMapping("/api/scores")
+public class ScoreControllerImpl implements ScoreController {
 
 	@Autowired
-	ApiErrorServiceImpl apiErrorService;
+	ScoreServiceImpl scoreService;
 
-	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/{id}")
-	public ResponseEntity<ApiError> getById(@PathVariable UUID id) {
-		return new ResponseEntity<>(apiErrorService.getById(id), HttpStatus.OK);
+	public ResponseEntity<Score> getById(@PathVariable UUID id) {
+		return new ResponseEntity<>(scoreService.getById(id), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("")
-	public ResponseEntity<List<ApiError>> getAll() {
-		return new ResponseEntity<>(apiErrorService.getAll(), HttpStatus.OK);
+	public ResponseEntity<List<Score>> getAll() {
+		return new ResponseEntity<>(scoreService.getAll(), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<MessageResponse> deleteById(@PathVariable UUID id) {
-		apiErrorService.deleteById(id);
-		return new ResponseEntity<>(new MessageResponse("ApiError uspješno izbrisan."), HttpStatus.OK);
+		scoreService.deleteById(id);
+		return new ResponseEntity<>(new MessageResponse("Score deleted successfully."), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("")
 	public ResponseEntity<MessageResponse> deleteAll() {
-		apiErrorService.deleteAll();
-		return new ResponseEntity<>(new MessageResponse("All Exception Logs have been deleted."), HttpStatus.OK);
+		scoreService.deleteAll();
+		return new ResponseEntity<>(new MessageResponse("All scores have been deleted."), HttpStatus.OK);
 	}
 
+	@GetMapping("/between")
+	public ResponseEntity<List<Score>> getAllByDateBetween(@RequestBody DateIntervalRequest dateIntervalRequest) {
+		return new ResponseEntity<>(
+				scoreService.getAllByDateBetween(dateIntervalRequest.getStart(), dateIntervalRequest.getEnd()),
+				HttpStatus.OK);
+	}
 }

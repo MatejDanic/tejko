@@ -6,24 +6,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import matej.tejkogames.constants.YambConstants;
 import matej.tejkogames.models.yamb.Box;
 import matej.tejkogames.models.yamb.BoxType;
 import matej.tejkogames.models.yamb.Column;
 import matej.tejkogames.models.yamb.ColumnType;
 import matej.tejkogames.models.yamb.Dice;
+import matej.tejkogames.models.yamb.Yamb;
 import matej.tejkogames.models.yamb.YambForm;
 import matej.tejkogames.models.yamb.YambType;
 
 public class YambUtil {
 
-    private static ObjectMapper mapper = new ObjectMapper();
+	public static Yamb generateYamb(YambType type, int numberOfColumns, int numberOfDice) {
+		return new Yamb(type, numberOfColumns, numberOfDice, generateYambForm(type, numberOfColumns, numberOfDice), generateDiceSet(numberOfDice));
+	}
 
-    public static YambForm generateYambForm(YambType type, int numberOfColumns, int numberOfDice) {
+    private static YambForm generateYambForm(YambType type, int numberOfColumns, int numberOfDice) {
 
         List<Column> columnList = new ArrayList<>();
         for (int i = 1; i <= numberOfColumns; i++) {
@@ -37,7 +36,7 @@ public class YambUtil {
         return form;
     }
 
-	public static Set<Dice> generateDiceSet(int numberOfDice) {
+	private static Set<Dice> generateDiceSet(int numberOfDice) {
 		Set<Dice> diceSet = new HashSet<Dice>();
 		for (int i = 1; i <= numberOfDice; i++) {
 			diceSet.add(new Dice(i));
@@ -45,26 +44,7 @@ public class YambUtil {
 		return diceSet;
 	}
 
-    public static String formToFormString(YambForm form) {
-        String formString = "";
-        try {
-            formString = mapper.writeValueAsString(form);
-        } catch (JsonProcessingException exception) {
-            System.out.println(exception.getMessage());
-        }
-        return formString;
-    }
-
-    public static String diceSetToDiceSetString(Set<Dice> diceSet) {
-        String diceSetString = "";
-        try {
-            diceSetString = mapper.writeValueAsString(diceSet);
-        } catch (JsonProcessingException exception) {
-            System.out.println(exception.getMessage());
-        }
-        return diceSetString;
-    }
-
+   
     private static List<Box> generateBoxList(ColumnType columnType) {
         List<Box> boxList = new ArrayList<>();
         for (BoxType boxType : BoxType.values()) {
@@ -75,25 +55,6 @@ public class YambUtil {
             boxList.add(box);
         }
         return boxList;
-    }
-
-    public static YambForm formStringToForm(String formString) {
-        try {
-            return mapper.readValue(formString, YambForm.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static Set<Dice> diceSetStringToDiceSet(String diceSetString) {
-        try {
-            return mapper.readValue(diceSetString, new TypeReference<Set<Dice>>() {
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     /**

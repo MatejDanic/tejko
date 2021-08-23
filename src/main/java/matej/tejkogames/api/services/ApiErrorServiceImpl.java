@@ -13,10 +13,10 @@ import matej.tejkogames.models.general.User;
 
 @Service
 public class ApiErrorServiceImpl implements ApiErrorService {
-    
+
     @Autowired
     ApiErrorRepository apiErrorRepository;
-    
+
     public ApiError save(ApiError apiError) {
         return apiErrorRepository.save(apiError);
     }
@@ -40,7 +40,7 @@ public class ApiErrorServiceImpl implements ApiErrorService {
     public void deleteById(UUID id) {
         apiErrorRepository.deleteById(id);
     }
-    
+
     public void deleteAll() {
         apiErrorRepository.deleteAll();
     }

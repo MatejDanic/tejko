@@ -15,12 +15,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
-    
+
     /**
-	 * This method overrides the addCorsMappings super method and makes POST, GET, PUT and DELETE METHODS available to the cors registry.
-	 *
-	 * @param registry the cors registry
-	 */
+     * This method overrides the addCorsMappings super method and makes POST, GET,
+     * PUT and DELETE METHODS available to the cors registry.
+     *
+     * @param registry the cors registry
+     */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**").allowedMethods("POST", "GET", "PUT", "DELETE");

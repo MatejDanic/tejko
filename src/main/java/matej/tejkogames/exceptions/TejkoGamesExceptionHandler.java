@@ -5,7 +5,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -13,6 +12,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import matej.tejkogames.api.services.ApiErrorServiceImpl;
 import matej.tejkogames.models.general.ApiError;
+import matej.tejkogames.models.general.enums.MessageType;
+import matej.tejkogames.models.general.payload.responses.MessageResponse;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
@@ -21,11 +22,12 @@ public class TejkoGamesExceptionHandler extends ResponseEntityExceptionHandler {
     @Autowired
     ApiErrorServiceImpl apiErrorService;
 
-    @ExceptionHandler(value = { IllegalMoveException.class, UsernameTakenException.class, InvalidOwnershipException.class, UsernameNotFoundException.class, RuntimeException.class })
+    @ExceptionHandler(Exception.class)
     protected ResponseEntity<Object> handleException(RuntimeException exception, WebRequest request) {
         ApiError apiError = new ApiError(exception);
         apiErrorService.save(apiError);
-        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new MessageResponse("Error", MessageType.ERROR, apiError.getContent()),
+                HttpStatus.BAD_REQUEST);
     }
 
 }

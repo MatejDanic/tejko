@@ -1,7 +1,7 @@
 package matej.tejkogames.models.general.enums;
 
-public enum Theme {
+public enum TejkoGame {
 
-    LIGHT, DARK
+    YAMB
 
 }

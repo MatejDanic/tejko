@@ -1,23 +1,24 @@
 package matej.tejkogames.models.general.payload.requests;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 
+import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.models.general.enums.Theme;
 
 public class PreferenceRequest {
 
-    @Max(3)
-    @Min(0)
-	private Integer volume;
+    @Size(min = TejkoGamesConstants.VOLUME_MIN, max = TejkoGamesConstants.VOLUME_MAX)
+    private Integer volume;
 
     private Theme theme;
 
-    protected PreferenceRequest() { }
+    protected PreferenceRequest() {
+    }
 
     public Integer getVolume() {
         return volume;
     }
+
     public void setVolume(Integer volume) {
         this.volume = volume;
     }

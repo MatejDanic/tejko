@@ -9,7 +9,7 @@ public class MessageResponse {
     private String sender;
 
     private MessageType type;
-    
+
     private Object body;
 
     public MessageResponse(String subject) {
@@ -46,16 +46,17 @@ public class MessageResponse {
     }
 
     // public MessageResponse(String subject, String username, MessageType type) {
-    //     this.subject = subject;
-    //     this.username = username;
-    //     this.type = type;
+    // this.subject = subject;
+    // this.username = username;
+    // this.type = type;
     // }
 
-    // public MessageResponse(String subject, String username, MessageType type, Object body) {
-    //     this.subject = subject;
-    //     this.username = username;
-    //     this.type = type;
-    //     this.body = body;
+    // public MessageResponse(String subject, String username, MessageType type,
+    // Object body) {
+    // this.subject = subject;
+    // this.username = username;
+    // this.type = type;
+    // this.body = body;
     // }
 
     public String getSubject() {
@@ -73,7 +74,7 @@ public class MessageResponse {
     public void setSender(String sender) {
         this.sender = sender;
     }
-    
+
     public MessageType getType() {
         return type;
     }
@@ -89,5 +90,5 @@ public class MessageResponse {
     public void setBody(Object body) {
         this.body = body;
     }
-    
+
 }

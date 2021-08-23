@@ -2,9 +2,12 @@ package matej.tejkogames.models.yamb;
 
 public class Box {
 
-	private int value;
+    private int value;
+
     private BoxType type;
+
     private boolean filled;
+
     private boolean available;
 
     public Box(BoxType type, boolean available) {

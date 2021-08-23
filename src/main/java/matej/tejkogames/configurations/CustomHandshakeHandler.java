@@ -16,5 +16,5 @@ public class CustomHandshakeHandler extends DefaultHandshakeHandler {
         // generate user name by UUID
         return new StompPrincipal(UUID.randomUUID().toString());
     }
-    
+
 }

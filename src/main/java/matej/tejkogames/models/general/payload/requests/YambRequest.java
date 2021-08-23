@@ -11,11 +11,11 @@ public class YambRequest {
 
     @NotBlank
     private YambType type;
-    
+
     @Min(YambConstants.NUMBER_OF_COLUMNS_MIN)
     @Max(YambConstants.NUMBER_OF_COLUMNS_MAX)
     private int numberOfColumns;
-    
+
     @Min(YambConstants.NUMBER_OF_DICE_MIN)
     @Max(YambConstants.NUMBER_OF_DICE_MAX)
     private int numberOfDice;
@@ -43,5 +43,5 @@ public class YambRequest {
     public void setNumberOfDice(int numberOfDice) {
         this.numberOfDice = numberOfDice;
     }
-    
+
 }
