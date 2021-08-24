@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service;
 import matej.tejkogames.api.repositories.UserRepository;
 import matej.tejkogames.api.repositories.YambRepository;
 import matej.tejkogames.api.repositories.ScoreRepository;
+import matej.tejkogames.api.repositories.TejkoGameRepository;
 import matej.tejkogames.exceptions.IllegalMoveException;
 import matej.tejkogames.interfaces.services.YambService;
 import matej.tejkogames.models.yamb.YambType;
 import matej.tejkogames.utils.YambUtil;
 import matej.tejkogames.models.general.Score;
-import matej.tejkogames.models.general.enums.TejkoGame;
 import matej.tejkogames.models.general.payload.requests.YambRequest;
 import matej.tejkogames.models.yamb.Box;
 import matej.tejkogames.models.yamb.BoxType;
@@ -36,6 +36,9 @@ public class YambServiceImpl implements YambService {
 
     @Autowired
     ScoreRepository scoreRepository;
+
+    @Autowired
+    TejkoGameRepository tejkoGamesRepository;
 
     public Yamb getById(UUID id) {
         return yambRepository.findById(id).get();
@@ -178,7 +181,7 @@ public class YambServiceImpl implements YambService {
         form.setAvailableBoxes(form.getAvailableBoxes() - 1);
 
         if (form.getAvailableBoxes() == 0) {
-            Score score = new Score(TejkoGame.YAMB, form.getTotalSum());
+            Score score = new Score(tejkoGamesRepository.findByName("Yamb"), form.getTotalSum());
             score.setUser(yamb.getUser());
             scoreRepository.save(score);
         }

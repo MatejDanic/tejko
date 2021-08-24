@@ -19,7 +19,6 @@ import matej.tejkogames.models.general.Preference;
 import matej.tejkogames.models.general.Role;
 import matej.tejkogames.models.general.Score;
 import matej.tejkogames.models.general.User;
-import matej.tejkogames.models.general.payload.requests.PreferenceRequest;
 import matej.tejkogames.models.yamb.Yamb;
 import matej.tejkogames.utils.YambUtil;
 
@@ -86,30 +85,12 @@ public class UserServiceImpl implements UserService {
         return preference;
     }
 
-    public Preference savePreferenceByUserId(UUID id) {
-        return preferenceRepository.save(new Preference(TejkoGamesConstants.DEFAULT_VOLUME, TejkoGamesConstants.DEFAULT_THEME));
+    public void deletePreferenceByUserId(UUID id) {
+        preferenceRepository.deleteById(getById(id).getPreference().getId());
     }
 
-    public Preference savePreferenceByUserId(UUID id, PreferenceRequest prefRequest) {
-        User user = getById(id);
-        Preference preference = user.getPreference();
-        if (preference != null) {
-            if (prefRequest.getVolume() != null) {
-                preference.setVolume(prefRequest.getVolume());
-            }
-        } else {
-            preference = new Preference();
-            preference.setUser(user);
-            if (prefRequest.getVolume() != null) {
-                if (prefRequest.getVolume() < 0 || prefRequest.getVolume() > 3) {
-                    throw new IllegalArgumentException("Glasnoća zvuka mora biti unutar granica! [0-3]");
-                }
-                preference.setVolume(prefRequest.getVolume());
-            }
-        }
-        user.setPreference(preference);
-        userRepository.save(user);
-        return preference;
+    public Preference savePreferenceByUserId(UUID id) {
+        return preferenceRepository.save(new Preference(TejkoGamesConstants.DEFAULT_VOLUME, TejkoGamesConstants.DEFAULT_THEME));
     }
 
     public Set<Role> assignRoleByUserId(UUID id, String roleLabel) {

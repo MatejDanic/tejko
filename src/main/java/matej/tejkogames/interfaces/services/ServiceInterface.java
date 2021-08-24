@@ -1,15 +1,14 @@
 package matej.tejkogames.interfaces.services;
 
 import java.util.List;
-import java.util.UUID;
 
-public interface ServiceInterface<T> {
+public interface ServiceInterface<T, I> {
 
-    public T getById(UUID id);
+    public T getById(I id);
 
     public List<T> getAll();
 
-    public void deleteById(UUID id);
+    public void deleteById(I id);
 
     public void deleteAll();
 

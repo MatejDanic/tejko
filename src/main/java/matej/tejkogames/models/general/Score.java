@@ -16,8 +16,6 @@ import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
 
-import matej.tejkogames.models.general.enums.TejkoGame;
-
 @Entity
 @Table(name="game_score")
 @RestResource(rel = "scores", path = "scores")
@@ -33,12 +31,13 @@ public class Score {
     private UUID id;
 
 	@ManyToOne
-    // @JsonIgnoreProperties({"scores", "yamb"})
-	@JsonIncludeProperties({"username"})
+	@JsonIncludeProperties({"id", "username"})
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@Column(nullable = false)
+	@ManyToOne
+	@JsonIncludeProperties({"id", "name"})
+	@JoinColumn(name = "game_id", nullable = false)
 	private TejkoGame game;
 	
 	@Column(nullable = false)

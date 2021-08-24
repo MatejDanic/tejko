@@ -48,7 +48,15 @@ public class Preference {
     }
 
     public Preference() {}
-    
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
     public User getUser() {
         return user;
     }
@@ -63,6 +71,14 @@ public class Preference {
 
     public void setVolume(int volume) {
         this.volume = volume;
+    }
+
+    public Theme getTheme() {
+        return theme;
+    }
+
+    public void setTheme(Theme theme) {
+        this.theme = theme;
     }
 
 }
