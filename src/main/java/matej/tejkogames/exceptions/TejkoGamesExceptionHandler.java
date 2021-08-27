@@ -23,10 +23,10 @@ public class TejkoGamesExceptionHandler extends ResponseEntityExceptionHandler {
     ApiErrorServiceImpl apiErrorService;
 
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<Object> handleException(RuntimeException exception, WebRequest request) {
-        ApiError apiError = new ApiError(exception);
+    protected ResponseEntity<MessageResponse> handleException(RuntimeException exception, WebRequest request) {
+        ApiError apiError = new ApiError(exception);            
         apiErrorService.save(apiError);
-        return new ResponseEntity<>(new MessageResponse("Error", MessageType.ERROR, apiError.getContent()),
+        return new ResponseEntity<>(new MessageResponse("Error", MessageType.ERROR, apiError.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 

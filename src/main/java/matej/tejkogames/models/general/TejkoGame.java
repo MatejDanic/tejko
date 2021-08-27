@@ -1,6 +1,6 @@
 package matej.tejkogames.models.general;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,29 +9,30 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.springframework.data.rest.core.annotation.RestResource;
 
 @Entity
-@Table(name="game")
+@Table(name = "game")
 @RestResource(rel = "games", path = "games")
 public class TejkoGame {
 
     @Id
     private int id;
 
-    @JsonIgnoreProperties("score")
-    @OneToMany(mappedBy = "score", fetch = FetchType.LAZY)
-    private List<Score> scores;
+    @JsonIgnore
+    @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
+    private Set<Score> scores;
 
     @Column(nullable = false, unique = true)
-	private String name;
+    private String name;
 
-	@Column
+    @Column
     private String description;
 
-    public TejkoGame() {}
+    public TejkoGame() {
+    }
 
     public TejkoGame(int id, String name, String description) {
         this.id = id;
@@ -47,13 +48,13 @@ public class TejkoGame {
         this.id = id;
     }
 
-    public List<Score> getScores() {
+    public Set<Score> getScores() {
         return scores;
     }
 
-    public void setScores(List<Score> scores) {
+    public void setScores(Set<Score> scores) {
         this.scores = scores;
-    }
+    }    
 
     public String getName() {
         return name;
@@ -70,7 +71,5 @@ public class TejkoGame {
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    
 
 }

@@ -1,6 +1,7 @@
 package matej.tejkogames.models.general;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -13,14 +14,19 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.springframework.data.rest.core.annotation.RestResource;
 
-import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.utils.ApiErrorUtil;
 
 @Entity
-@Table
+@Table(name = "api_error")
+@RestResource(rel = "errors", path = "errors")
+@TypeDef(name = "json_binary", typeClass = JsonBinaryType.class)
 public class ApiError {
 
     @Id
@@ -37,20 +43,27 @@ public class ApiError {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = false, length = TejkoGamesConstants.EXCEPTION_LOG_SIZE)
-    private String content;
+    @Column
+    private String message;
+
+    @Type(type = "json_binary")
+    @Column(columnDefinition = "jsonb")
+    private List<String> content;
 
     public ApiError() {}
 
     public ApiError(Throwable exception) {
         this.timestamp = LocalDateTime.now();    
-        this.content = ApiErrorUtil.constructApiErrorContent(exception, TejkoGamesConstants.RECURSION_LIMIT);
+        this.message = ApiErrorUtil.constructErrorMessage(exception);   
+        this.content = ApiErrorUtil.constructErrorContent(exception);
+
     }
 
     public ApiError(User user, Throwable exception) {
         this.user = user;
         this.timestamp = LocalDateTime.now();
-        this.content = ApiErrorUtil.constructApiErrorContent(exception, TejkoGamesConstants.RECURSION_LIMIT);
+        this.message = ApiErrorUtil.constructErrorMessage(exception);
+        this.content = ApiErrorUtil.constructErrorContent(exception);
     }
 
 
@@ -78,12 +91,22 @@ public class ApiError {
         this.user = user;
     }
 
-    public String getContent() {
+    public List<String> getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    public void setContent(List<String> content) {
         this.content = content;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+
+    
 }

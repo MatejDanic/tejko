@@ -1,9 +1,15 @@
 package matej.tejkogames.models.general;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.springframework.data.rest.core.annotation.RestResource;
 
@@ -20,6 +26,10 @@ public class Role {
 
 	@Column
     private String description;
+    
+    @JsonIgnore
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    private Set<User> users;
 
     public Role() {}
 
@@ -45,11 +55,11 @@ public class Role {
         this.label = label;
     }
 
-    public String getdescription() {
+    public String getDescription() {
         return description;
     }
 
-    public void setdescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
     

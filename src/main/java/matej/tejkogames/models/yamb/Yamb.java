@@ -8,10 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -33,9 +33,9 @@ public class Yamb {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @OneToOne
-    @JsonIgnore
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @ManyToOne
+    @JsonIncludeProperties({ "id", "username" })
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column
@@ -60,6 +60,11 @@ public class Yamb {
 
     @Column
     private int rollCount;
+
+	@ManyToOne
+	@JsonIncludeProperties("id")
+	@JoinColumn(name = "challenge_id")
+	private YambChallenge challenge;
 
     public Yamb() {
     }

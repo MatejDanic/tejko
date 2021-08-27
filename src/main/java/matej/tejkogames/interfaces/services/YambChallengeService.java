@@ -2,9 +2,9 @@ package matej.tejkogames.interfaces.services;
 
 import java.util.UUID;
 
-import matej.tejkogames.models.general.Preference;
+import matej.tejkogames.models.yamb.YambChallenge;
 
-public interface PreferenceService extends ServiceInterface<Preference, UUID> {
+public interface YambChallengeService extends ServiceInterface<YambChallenge, UUID> {
     
     public boolean hasPermission(UUID id, String username);
 

@@ -40,7 +40,7 @@ public class PreferenceControllerImpl implements PreferenceController {
     }
     
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<List<Preference>> getAll() {
         return new ResponseEntity<>(preferenceService.getAll(), HttpStatus.OK);
 
@@ -54,7 +54,7 @@ public class PreferenceControllerImpl implements PreferenceController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/")
+    @DeleteMapping("")
     public ResponseEntity<MessageResponse> deleteAll() {
         preferenceService.deleteAll();
         return new ResponseEntity<>(new MessageResponse("Preference", MessageType.DEFAULT, "All preferences have been successfully deleted"), HttpStatus.OK);

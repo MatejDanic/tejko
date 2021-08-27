@@ -23,8 +23,8 @@ import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.interfaces.controllers.UserController;
 import matej.tejkogames.models.general.Preference;
 import matej.tejkogames.models.general.Role;
-import matej.tejkogames.models.general.Score;
 import matej.tejkogames.models.general.User;
+import matej.tejkogames.models.general.Score;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
 import matej.tejkogames.models.yamb.Yamb;
 
@@ -61,11 +61,18 @@ public class UserControllerImpl implements UserController {
 		return new ResponseEntity<>(new MessageResponse("Svi korisnici uspješno izbrisani."), HttpStatus.OK);
 	}
 
+	// @PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
+	// @PutMapping("/{id}/yambs/{type}")
+	// public ResponseEntity<Yamb> getYambByTypeAndByUserId(@RequestHeader(value = "Authorization") String headerAuth,
+	// 		@PathVariable UUID id, @PathVariable YambType type) {
+	// 	return new ResponseEntity<>(userService.getYambByTypeAndByUserId(id, type), HttpStatus.OK);
+	// }
+
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
-	@PutMapping("/{id}/yamb")
-	public ResponseEntity<Yamb> getYambByUserId(@RequestHeader(value = "Authorization") String headerAuth,
+	@GetMapping("/{id}/yambs")
+	public ResponseEntity<Set<Yamb>> getYambsByUserId(@RequestHeader(value = "Authorization") String headerAuth,
 			@PathVariable UUID id) {
-		return new ResponseEntity<>(userService.getYambByUserId(id), HttpStatus.OK);
+		return new ResponseEntity<>(userService.getYambsByUserId(id), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
@@ -89,17 +96,11 @@ public class UserControllerImpl implements UserController {
 		return new ResponseEntity<>("Preference for user with id " + id + " successfully deleted.", HttpStatus.OK);
 	}
 
-	// @PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
-	// @PatchMapping("/{id}/preferences")
-	// public ResponseEntity<Preference> savePreferenceByUserId(@RequestHeader(value = "Authorization") String headerAuth,
-	// 		@PathVariable(value = "id") UUID id, @RequestBody PreferenceRequest preferenceRequest) {
-	// 	return new ResponseEntity<>(userService.savePreferenceByUserId(id, preferenceRequest), HttpStatus.OK);
-	// }
-
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
 	@GetMapping("/{id}/scores")
 	public ResponseEntity<List<Score>> getScoresByUserId(@RequestHeader(value = "Authorization") String headerAuth,
 			@PathVariable UUID id) {
 		return new ResponseEntity<>(userService.getScoresByUserId(id), HttpStatus.OK);
 	}
+
 }

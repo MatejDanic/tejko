@@ -18,7 +18,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 import matej.tejkogames.models.general.enums.Theme;
 
 @Entity
-@Table
+@Table(name = "user_preference")
 @RestResource(rel = "preferences", path = "preferences")
 public class Preference {
 

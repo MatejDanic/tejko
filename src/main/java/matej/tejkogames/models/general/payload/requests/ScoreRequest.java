@@ -9,11 +9,11 @@ public class ScoreRequest {
 
     private User user;
 
-	private TejkoGame game;
-	
-	private int value;
-	
-	private LocalDateTime date;
+    private TejkoGame game;
+
+    private Integer value;
+
+    private LocalDateTime date;
 
     protected ScoreRequest() {
     }
@@ -34,11 +34,11 @@ public class ScoreRequest {
         this.game = game;
     }
 
-    public int getValue() {
+    public Integer getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(Integer value) {
         this.value = value;
     }
 
@@ -49,7 +49,5 @@ public class ScoreRequest {
     public void setDate(LocalDateTime date) {
         this.date = date;
     }
-
-    
 
 }

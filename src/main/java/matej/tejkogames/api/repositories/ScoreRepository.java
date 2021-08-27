@@ -12,6 +12,8 @@ public interface ScoreRepository extends JpaRepository<Score, UUID> {
 
     List<Score> findAllByUserId(UUID id);
 
+    List<Score> findAllByGameId(Integer id);
+
     List<Score> findAllByDateBetween(LocalDateTime start, LocalDateTime end);
 
 }

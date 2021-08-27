@@ -44,4 +44,8 @@ public class PreferenceServiceImpl implements PreferenceService {
         return preferenceRepository.save(preference);
     }
     
+    public boolean hasPermission(UUID id, String username) {
+        return preferenceRepository.getById(id).getUser().getUsername().equals(username);
+    }
+    
 }

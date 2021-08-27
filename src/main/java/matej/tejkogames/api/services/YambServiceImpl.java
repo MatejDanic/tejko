@@ -60,6 +60,10 @@ public class YambServiceImpl implements YambService {
         return yambRepository.save(yamb);
     }
 
+    public boolean hasPermission(UUID id, String username) {
+        return getById(id).getUser().getUsername().equals(username);
+    }
+
     /**
      * Deletes {@link Yamb} object from database repository.
      * 
@@ -181,7 +185,7 @@ public class YambServiceImpl implements YambService {
         form.setAvailableBoxes(form.getAvailableBoxes() - 1);
 
         if (form.getAvailableBoxes() == 0) {
-            Score score = new Score(tejkoGamesRepository.findByName("Yamb"), form.getTotalSum());
+            Score score = new Score(form.getTotalSum());
             score.setUser(yamb.getUser());
             scoreRepository.save(score);
         }

@@ -1,7 +1,5 @@
 package matej.tejkogames.models.general;
 
-import java.util.List;
-// import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -20,13 +18,15 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.models.yamb.Yamb;
+import matej.tejkogames.models.yamb.YambChallenge;
+import matej.tejkogames.models.yamb.YambMatch;
 
 @Entity
 @Table(name = "auth_user")
@@ -35,24 +35,21 @@ public class User {
 
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-        name = "UUID",
-        strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @JsonIgnoreProperties("user")
+    @JsonIncludeProperties({"id", "value", "date"})
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Score> scores;
-
-    @JsonIgnoreProperties("user")
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<ApiError> apiErrors;
+    private Set<Score> scores;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Yamb yamb;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<ApiError> apiErrors;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Yamb> yambs;
 
     @Column(nullable = false, unique = true)
     @Size(min = TejkoGamesConstants.USERNAME_LENGTH_MIN, max = TejkoGamesConstants.USERNAME_LENGTH_MAX)
@@ -62,15 +59,25 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @JsonIncludeProperties({ "id", "label" })
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "auth_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
     @JsonIgnore
+    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
+    private Set<YambChallenge> challenges;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
+    private Set<YambMatch> matches;
+
+    @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Preference preference;
 
-    public User() {}
+    public User() {
+    }
 
     public User(String username, String password) {
         this.username = username;
@@ -85,20 +92,20 @@ public class User {
         this.id = id;
     }
 
-    public List<Score> getScores() {
+    public Set<Score> getScores() {
         return scores;
     }
 
-    public void setScores(List<Score> scores) {
+    public void setScores(Set<Score> scores) {
         this.scores = scores;
     }
 
-    public Yamb getYamb() {
-        return yamb;
+    public Set<Yamb> getYambs() {
+        return yambs;
     }
 
-    public void setYamb(Yamb yamb) {
-        this.yamb = yamb;
+    public void setYambs(Set<Yamb> yambs) {
+        this.yambs = yambs;
     }
 
     public String getUsername() {
@@ -137,7 +144,7 @@ public class User {
     public String toString() {
         String string = username;
         for (Role role : roles) {
-            string += role.getLabel() + ": " + role.getdescription() + "\n";
+            string += role.getLabel() + ": " + role.getDescription() + "\n";
         }
         return string;
     }

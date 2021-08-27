@@ -39,7 +39,17 @@ public class ScoreServiceImpl implements ScoreService {
     }
 
     public Score updateById(UUID id, ScoreRequest scoreRequest) {
-        return null;
+        Score score = getById(id);
+        if (scoreRequest.getUser() != null) {
+            score.setUser(scoreRequest.getUser());
+        }
+        if (scoreRequest.getDate() != null) {
+            score.setDate(scoreRequest.getDate());
+        }
+        if (scoreRequest.getValue() != null) {
+            score.setValue(scoreRequest.getValue());
+        }
+        return scoreRepository.save(score);
     }
 
 }

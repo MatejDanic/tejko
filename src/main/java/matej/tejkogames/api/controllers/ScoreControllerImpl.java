@@ -31,42 +31,42 @@ import matej.tejkogames.models.general.payload.responses.MessageResponse;
 public class ScoreControllerImpl implements ScoreController {
 
 	@Autowired
-	ScoreServiceImpl scoreService;
+	ScoreServiceImpl yambScoreService;
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Score> getById(@PathVariable UUID id) {
-		return new ResponseEntity<>(scoreService.getById(id), HttpStatus.OK);
+		return new ResponseEntity<>(yambScoreService.getById(id), HttpStatus.OK);
 	}
 
 	@GetMapping("")
 	public ResponseEntity<List<Score>> getAll() {
-		return new ResponseEntity<>(scoreService.getAll(), HttpStatus.OK);
+		return new ResponseEntity<>(yambScoreService.getAll(), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<MessageResponse> deleteById(@PathVariable UUID id) {
-		scoreService.deleteById(id);
+		yambScoreService.deleteById(id);
 		return new ResponseEntity<>(new MessageResponse("Score deleted successfully."), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("")
 	public ResponseEntity<MessageResponse> deleteAll() {
-		scoreService.deleteAll();
+		yambScoreService.deleteAll();
 		return new ResponseEntity<>(new MessageResponse("All scores have been deleted."), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
-    @PatchMapping("/{id}")
-    public ResponseEntity<Score> updateById(@PathVariable UUID id, @RequestBody ScoreRequest scoreRequest) {
-        return new ResponseEntity<>(scoreService.updateById(id, scoreRequest), HttpStatus.OK);
-    }
+	@PatchMapping("/{id}")
+	public ResponseEntity<Score> updateById(@PathVariable UUID id, @RequestBody ScoreRequest scoreRequest) {
+		return new ResponseEntity<>(yambScoreService.updateById(id, scoreRequest), HttpStatus.OK);
+	}
 
 	@GetMapping("/between")
 	public ResponseEntity<List<Score>> getAllByDateBetween(@RequestBody DateIntervalRequest dateIntervalRequest) {
 		return new ResponseEntity<>(
-				scoreService.getAllByDateBetween(dateIntervalRequest.getStart(), dateIntervalRequest.getEnd()),
+				yambScoreService.getAllByDateBetween(dateIntervalRequest.getStart(), dateIntervalRequest.getEnd()),
 				HttpStatus.OK);
 	}
 
