@@ -13,10 +13,8 @@ import matej.tejkogames.api.repositories.ScoreRepository;
 import matej.tejkogames.api.repositories.TejkoGameRepository;
 import matej.tejkogames.exceptions.IllegalMoveException;
 import matej.tejkogames.interfaces.services.YambService;
-import matej.tejkogames.models.yamb.YambType;
 import matej.tejkogames.utils.YambUtil;
 import matej.tejkogames.models.general.Score;
-import matej.tejkogames.models.general.payload.requests.YambRequest;
 import matej.tejkogames.models.yamb.Box;
 import matej.tejkogames.models.yamb.BoxType;
 import matej.tejkogames.models.yamb.Column;
@@ -57,34 +55,6 @@ public class YambServiceImpl implements YambService {
     }
 
     public Yamb saveById(Yamb yamb) {
-        return yambRepository.save(yamb);
-    }
-
-    public boolean hasPermission(UUID id, String username) {
-        return getById(id).getUser().getUsername().equals(username);
-    }
-
-    /**
-     * Deletes {@link Yamb} object from database repository.
-     * 
-     * @param username the username of the form owner
-     * @param yambId   the id of yamb
-     * 
-     * @throws InvalidOwnershipException if form does not belong to user
-     */
-    public Yamb restartById(UUID id) {
-        Yamb yamb = getById(id);
-        return initializeYambById(id, yamb.getType(), yamb.getNumberOfColumns(), yamb.getNumberOfDice());
-    }
-
-    public Yamb recreateById(UUID id, YambRequest yambRequest) {
-        return initializeYambById(id, yambRequest.getType(), yambRequest.getNumberOfColumns(),
-                yambRequest.getNumberOfDice());
-    }
-
-    private Yamb initializeYambById(UUID id, YambType type, int numberOfColumns, int numberOfDice) {
-        Yamb yamb = YambUtil.generateYamb(type, numberOfColumns, numberOfDice);
-        yamb.setId(id);
         return yambRepository.save(yamb);
     }
 
@@ -202,6 +172,10 @@ public class YambServiceImpl implements YambService {
         yambRepository.save(yamb);
 
         return yamb;
+    }
+
+    public boolean hasPermission(UUID id, String username) {
+        return getById(id).getUser().getUsername().equals(username);
     }
 
 }

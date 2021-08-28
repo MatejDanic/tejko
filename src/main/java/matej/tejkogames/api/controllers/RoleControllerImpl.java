@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,7 +35,7 @@ public class RoleControllerImpl implements RoleController {
     RoleServiceImpl roleService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Role> getById(Integer id) {
+    public ResponseEntity<Role> getById(@PathVariable Integer id) {
         return new ResponseEntity<>(roleService.getById(id), HttpStatus.OK);
     }
 
@@ -45,14 +46,14 @@ public class RoleControllerImpl implements RoleController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResponse> deleteById(Integer id) {
+    public ResponseEntity<MessageResponse> deleteById(@RequestHeader(value = "Authorization") String headerAuth, Integer id) {
         roleService.deleteById(id);
         return new ResponseEntity<>(new MessageResponse("", MessageType.DEFAULT, ""), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("")
-    public ResponseEntity<MessageResponse> deleteAll() {
+    public ResponseEntity<MessageResponse> deleteAll(@RequestHeader(value = "Authorization") String headerAuth) {
         roleService.deleteAll();
         return new ResponseEntity<>(new MessageResponse("", MessageType.DEFAULT, ""), HttpStatus.OK);
     }

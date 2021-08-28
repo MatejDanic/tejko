@@ -12,18 +12,25 @@ import matej.tejkogames.models.yamb.BoxType;
 import matej.tejkogames.models.yamb.Column;
 import matej.tejkogames.models.yamb.ColumnType;
 import matej.tejkogames.models.yamb.Dice;
-import matej.tejkogames.models.yamb.Yamb;
 import matej.tejkogames.models.yamb.YambForm;
 import matej.tejkogames.models.yamb.YambType;
 
 public class YambUtil {
 
-	public static Yamb generateYamb(YambType type, int numberOfColumns, int numberOfDice) {
-		return new Yamb(type, numberOfColumns, numberOfDice, generateYambForm(type, numberOfColumns, numberOfDice),
-				generateDiceSet(numberOfDice));
-	}
+	// public static Yamb generateYamb(User user, YambType type, int numberOfColumns, int numberOfDice) {
+	// 	Yamb yamb = new Yamb();
+	// 	yamb.setUser(user);
+	// 	yamb.setType(type);
+	// 	yamb.setNumberOfColumns(numberOfColumns);
+	// 	yamb.setNumberOfDice(numberOfDice);
+	// 	yamb.setYambForm(generateYambForm);
+	// 	yamb.setUser(user);
 
-	private static YambForm generateYambForm(YambType type, int numberOfColumns, int numberOfDice) {
+	// 	return new Yamb(user, type, numberOfColumns, numberOfDice, generateYambForm(type, numberOfColumns, numberOfDice),
+	// 			generateDiceSet(numberOfDice));
+	// }
+
+	public static YambForm generateYambForm(YambType type, int numberOfColumns, int numberOfDice) {
 
 		List<Column> columnList = new ArrayList<>();
 		for (int i = 1; i <= numberOfColumns; i++) {
@@ -38,7 +45,7 @@ public class YambUtil {
 		return form;
 	}
 
-	private static Set<Dice> generateDiceSet(int numberOfDice) {
+	public static Set<Dice> generateDiceSet(int numberOfDice) {
 		Set<Dice> diceSet = new HashSet<>();
 		for (int i = 1; i <= numberOfDice; i++) {
 			diceSet.add(new Dice(i));
@@ -46,7 +53,7 @@ public class YambUtil {
 		return diceSet;
 	}
 
-	private static List<Box> generateBoxList(ColumnType columnType) {
+	public static List<Box> generateBoxList(ColumnType columnType) {
 		List<Box> boxList = new ArrayList<>();
 		for (BoxType boxType : BoxType.values()) {
 			boolean available = (columnType == ColumnType.DOWNWARDS && boxType == BoxType.ONES
@@ -109,7 +116,7 @@ public class YambUtil {
 	 * @param diceSet the values of rolled dice
 	 * @return {@code int} the sum of all dice values
 	 */
-	public static int calculateSum(Set<Integer> diceValues) {
+	private static int calculateSum(Set<Integer> diceValues) {
 		int sum = 0;
 		for (int value : diceValues) {
 			sum += value;
@@ -123,7 +130,7 @@ public class YambUtil {
 	 * @param diceSet the values of rolled dice
 	 * @return {@code int} the sum of all dice values equal to box type
 	 */
-	public static int calculateSumByType(Set<Integer> diceValues, BoxType boxType) {
+	private static int calculateSumByType(Set<Integer> diceValues, BoxType boxType) {
 		int sum = 0;
 		for (int value : diceValues) {
 			int boxTypeId = boxType.ordinal() + 1; // boxType id matches first six boxes by representing number ("ONES"
@@ -148,7 +155,7 @@ public class YambUtil {
 	 *         certain number of times; 0 if all values occured less than given
 	 *         number of times
 	 */
-	public static int calculateSumOfRepeatingValue(Set<Integer> diceValues, int repeatNumber, int bonus) {
+	private static int calculateSumOfRepeatingValue(Set<Integer> diceValues, int repeatNumber, int bonus) {
 		for (int i = 1; i <= 6; i++) {
 			int count = Collections.frequency(diceValues, i);
 			if (count >= repeatNumber) { // if count has reached given number return sum increased by given bonus
@@ -168,7 +175,7 @@ public class YambUtil {
 	 * @return {@code int} the predefined value of a small or big straight if it
 	 *         occured and 0 otherwise.
 	 */
-	public static int calculateStraight(Set<Integer> diceValues) {
+	private static int calculateStraight(Set<Integer> diceValues) {
 		Set<Integer> straight = new HashSet<>();
 		straight.add(2);
 		straight.add(3);

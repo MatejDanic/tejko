@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,14 +49,14 @@ public class PreferenceControllerImpl implements PreferenceController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResponse> deleteById(@PathVariable UUID id) {
+    public ResponseEntity<MessageResponse> deleteById(@RequestHeader(value = "Authorization") String headerAuth, @PathVariable UUID id) {
         preferenceService.deleteById(id);
         return new ResponseEntity<>(new MessageResponse("Preference", MessageType.DEFAULT, "Preference with id " + id + " has been successfully deleted"), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("")
-    public ResponseEntity<MessageResponse> deleteAll() {
+    public ResponseEntity<MessageResponse> deleteAll(@RequestHeader(value = "Authorization") String headerAuth) {
         preferenceService.deleteAll();
         return new ResponseEntity<>(new MessageResponse("Preference", MessageType.DEFAULT, "All preferences have been successfully deleted"), HttpStatus.OK);
     }

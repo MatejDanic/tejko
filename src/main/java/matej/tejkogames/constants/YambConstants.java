@@ -26,5 +26,6 @@ public class YambConstants {
 	public static final YambType DEFAULT_TYPE = YambType.CLASSIC;
 
 	public static final int CHALLENGE_LIMIT = 3;
+	public static final int YAMB_LIMIT = 1;
 
 }

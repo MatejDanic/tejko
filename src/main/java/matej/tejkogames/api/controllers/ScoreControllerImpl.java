@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,14 +46,14 @@ public class ScoreControllerImpl implements ScoreController {
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/{id}")
-	public ResponseEntity<MessageResponse> deleteById(@PathVariable UUID id) {
+	public ResponseEntity<MessageResponse> deleteById(@RequestHeader(value = "Authorization") String headerAuth, @PathVariable UUID id) {
 		yambScoreService.deleteById(id);
 		return new ResponseEntity<>(new MessageResponse("Score deleted successfully."), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("")
-	public ResponseEntity<MessageResponse> deleteAll() {
+	public ResponseEntity<MessageResponse> deleteAll(@RequestHeader(value = "Authorization") String headerAuth) {
 		yambScoreService.deleteAll();
 		return new ResponseEntity<>(new MessageResponse("All scores have been deleted."), HttpStatus.OK);
 	}

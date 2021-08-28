@@ -23,7 +23,6 @@ import matej.tejkogames.api.services.YambServiceImpl;
 import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.exceptions.IllegalMoveException;
 import matej.tejkogames.interfaces.controllers.YambController;
-import matej.tejkogames.models.general.payload.requests.YambRequest;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
 import matej.tejkogames.models.yamb.BoxType;
 import matej.tejkogames.models.yamb.ColumnType;
@@ -60,14 +59,14 @@ public class YambControllerImpl implements YambController {
 
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'Yamb')")
 	@DeleteMapping("/{id}")
-	public ResponseEntity<MessageResponse> deleteById(@PathVariable(value = "id") UUID id) {
+	public ResponseEntity<MessageResponse> deleteById(@RequestHeader(value = "Authorization") String headerAuth, @PathVariable(value = "id") UUID id) {
 		yambService.deleteById(id);
 		return new ResponseEntity<>(new MessageResponse("Yamb s id-em " + id + " uspješno izbrisan."), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("")
-	public ResponseEntity<MessageResponse> deleteAll() {
+	public ResponseEntity<MessageResponse> deleteAll(@RequestHeader(value = "Authorization") String headerAuth) {
 		yambService.deleteAll();
 		return new ResponseEntity<>(new MessageResponse("Svi Yambovi uspješno izbrisani."), HttpStatus.OK);
 	}
@@ -94,18 +93,6 @@ public class YambControllerImpl implements YambController {
 			@PathVariable(value = "boxType") BoxType boxType) throws IllegalMoveException {
 		return new ResponseEntity<>(yambService.fillById(id, columnType, boxType), HttpStatus.OK);
 
-	}
-
-	@PutMapping("/{id}/restart")
-	public ResponseEntity<Yamb> restartById(@RequestHeader(value = "Authorization") String headerAuth,
-			@PathVariable(value = "id") UUID id) {
-		return new ResponseEntity<>(yambService.restartById(id), HttpStatus.OK);
-	}
-
-	@PutMapping("/{id}/recreate")
-	public ResponseEntity<Yamb> recreateById(@RequestHeader(value = "Authorization") String headerAuth,
-			@PathVariable(value = "id") UUID id, @RequestBody YambRequest yambRequest) {
-		return new ResponseEntity<>(yambService.recreateById(id, yambRequest), HttpStatus.OK);
 	}
 
 }

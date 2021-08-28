@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -25,6 +26,8 @@ import matej.tejkogames.models.general.Preference;
 import matej.tejkogames.models.general.Role;
 import matej.tejkogames.models.general.User;
 import matej.tejkogames.models.general.Score;
+import matej.tejkogames.models.general.payload.requests.RoleRequest;
+import matej.tejkogames.models.general.payload.requests.YambRequest;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
 import matej.tejkogames.models.yamb.Yamb;
 
@@ -49,16 +52,22 @@ public class UserControllerImpl implements UserController {
 
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
 	@DeleteMapping("/{id}")
-	public ResponseEntity<MessageResponse> deleteById(@PathVariable UUID id) {
+	public ResponseEntity<MessageResponse> deleteById(@RequestHeader(value = "Authorization") String headerAuth, @PathVariable UUID id) {
 		userService.deleteById(id);
 		return new ResponseEntity<>(new MessageResponse("Korisnik uspješno izbrisan."), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("")
-	public ResponseEntity<MessageResponse> deleteAll() {
+	public ResponseEntity<MessageResponse> deleteAll(@RequestHeader(value = "Authorization") String headerAuth) {
 		userService.deleteAll();
 		return new ResponseEntity<>(new MessageResponse("Svi korisnici uspješno izbrisani."), HttpStatus.OK);
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/{id}/yamb")
+	public ResponseEntity<Yamb> createYambByUserId(@RequestHeader(value = "Authorization") String headerAuth, @PathVariable UUID id, YambRequest yambRequest) {
+		return new ResponseEntity<>(userService.createYambByUserId(id, yambRequest), HttpStatus.OK);
 	}
 
 	// @PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
@@ -77,8 +86,8 @@ public class UserControllerImpl implements UserController {
 
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
 	@PutMapping("/{id}/assign-role")
-	public ResponseEntity<Set<Role>> assignRoleByUserId(@PathVariable UUID id, @RequestBody String roleLabel) {
-		return new ResponseEntity<>(userService.assignRoleByUserId(id, roleLabel), HttpStatus.OK);
+	public ResponseEntity<Set<Role>> assignRoleByUserId(@RequestHeader(value = "Authorization") String headerAuth, @PathVariable UUID id, @RequestBody RoleRequest roleRequest) {
+		return new ResponseEntity<>(userService.assignRoleByUserId(id, roleRequest), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")

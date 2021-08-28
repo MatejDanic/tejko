@@ -20,6 +20,7 @@ import org.hibernate.annotations.TypeDef;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import matej.tejkogames.models.general.User;
+import matej.tejkogames.utils.YambUtil;
 
 @Entity
 @Table(name = "game_yamb")
@@ -69,14 +70,14 @@ public class Yamb {
     public Yamb() {
     }
 
-    public Yamb(YambType type, int numberOfColumns, int numberOfDice, YambForm form, Set<Dice> diceSet) {
+    public Yamb(User user, YambType type, int numberOfColumns, int numberOfDice) {
         this.type = type;
         this.numberOfColumns = numberOfColumns;
         this.numberOfDice = numberOfDice;
-        this.form = form;
         this.announcement = null;
-        this.diceSet = diceSet;
         this.rollCount = 0;
+        this.form = YambUtil.generateYambForm(type, numberOfColumns, numberOfDice);
+        this.diceSet = YambUtil.generateDiceSet(numberOfDice);
     }
 
     public UUID getId() {

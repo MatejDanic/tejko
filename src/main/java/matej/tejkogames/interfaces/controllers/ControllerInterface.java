@@ -12,8 +12,8 @@ public interface ControllerInterface<T, I> {
 
     public ResponseEntity<List<T>> getAll();
 
-    public ResponseEntity<MessageResponse> deleteById(I id);
+    public ResponseEntity<MessageResponse> deleteById(String headerAuth, I id);
 
-    public ResponseEntity<MessageResponse> deleteAll();
+    public ResponseEntity<MessageResponse> deleteAll(String headerAuth);
 
 }
