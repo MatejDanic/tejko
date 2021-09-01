@@ -84,7 +84,7 @@ public class UserControllerImpl implements UserController {
 		return new ResponseEntity<>(userService.getYambsByUserId(id), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
+	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'Matej')")
 	@PutMapping("/{id}/assign-role")
 	public ResponseEntity<Set<Role>> assignRoleByUserId(@RequestHeader(value = "Authorization") String headerAuth, @PathVariable UUID id, @RequestBody RoleRequest roleRequest) {
 		return new ResponseEntity<>(userService.assignRoleByUserId(id, roleRequest), HttpStatus.OK);

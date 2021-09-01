@@ -33,6 +33,9 @@ public class SocketController {
     @Autowired
     SimpMessagingTemplate simpMessagingTemplate;
 
+    @Autowired
+    YambMatchControllerImpl yambMatchController;
+
     @MessageMapping("/greeting")
     @SendTo("/topic/greetings")
     public MessageResponse greeting(MessageRequest message, Principal principal) throws Exception {
@@ -45,7 +48,7 @@ public class SocketController {
 
     @MessageMapping("/text")
     @SendTo("/topic/everyone")
-    public MessageResponse message(MessageRequest message) throws Exception {
+    public MessageResponse sendChatMessageToEveryone(MessageRequest message) throws Exception {
         if (message.getToken() != null
                 && jwtUtil.getUsernameFromJwtToken(message.getToken()).equals(message.getSender())) {
             return new MessageResponse(message.getSubject(), MessageType.CHAT, message.getBody(), message.getSender());
@@ -53,16 +56,29 @@ public class SocketController {
         return null;
     }
 
-    @MessageMapping("/challenge")
-    @SendToUser("/topic/challenge")
-    public void sendSpecific(@Payload MessageRequest message, @Header("simpSessionId") String sessionId)
+    @MessageMapping("/chat")
+    @SendToUser("/topic/user")
+    public void sendChatMessage(@Payload MessageRequest message, @Header("simpSessionId") String sessionId)
             throws Exception {
         if (message.getToken() != null
                 && jwtUtil.getUsernameFromJwtToken(message.getToken()).equals(message.getSender())) {
-            MessageResponse response = new MessageResponse(message.getSubject(), MessageType.CHALLENGE,
+            MessageResponse response = new MessageResponse(message.getSubject(), MessageType.CHAT,
                     message.getBody(), message.getSender());
             simpMessagingTemplate.convertAndSendToUser(socketService.getUUIDFromUsername(message.getReceiver()),
-                    "/topic/challenge", response);
+                    "/topic/user", response);
+        }
+    }
+
+    @MessageMapping("/match")
+    @SendToUser("/topic/match")
+    public void sendMatch(@Payload MessageRequest message, @Header("simpSessionId") String sessionId)
+            throws Exception {
+        if (message.getToken() != null
+                && jwtUtil.getUsernameFromJwtToken(message.getToken()).equals(message.getSender())) {
+            MessageResponse response = new MessageResponse(message.getSubject(), MessageType.MATCH,
+                    message.getBody(), message.getSender());
+            simpMessagingTemplate.convertAndSendToUser(socketService.getUUIDFromUsername(message.getReceiver()),
+                    "/topic/match", response);
         }
     }
 }
