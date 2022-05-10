@@ -1,6 +1,5 @@
-cd ./tejko-games-client
+cd ./tejko-client
 start cmd /k npm start
 cd ../
-cd ./tejko-games-server
+cd ./tejko-server
 mvn spring-boot:run
-exit
